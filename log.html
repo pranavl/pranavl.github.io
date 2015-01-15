@@ -20,6 +20,50 @@
 <font size="5"><b>Development of Wearable Intelligent Navigation System for Surgery</b></font>		<br/>
 <a href="/Files/WINSS_FallReport_Lakshminarayanan.pdf">Project Description (updated 2014.12.12)</a>	<br/><p>
 
+
+<!------------------------------------------------------------------------------------>
+
+<b>2015.01.15</b>
+<blockquote>
+	Continued trying to solve library loading problem.										<br/>
+	Met with Dr. Kazanzides for help:														<br/>
+		&nbsp&nbsp&nbsp&nbsp
+		Ran Dependency Walker to find problems												<br/>
+		&nbsp&nbsp&nbsp&nbsp
+		Seems like problem is with system libraries are 64-bit								<br/>
+	Set up WiFi P2P connection between Moverio and Android phone							<br/>
+		&nbsp&nbsp&nbsp&nbsp
+		Now, must find a way to connect to PC												<br/>
+</blockquote>
+
+<!------------------------------------------------------------------------------------>
+
+<b>2015.01.14</b>
+<blockquote>
+	Reinstalled 32-bit version of Java and updated path variables.							<br/>
+		&nbsp&nbsp&nbsp&nbsp
+		Solved 32- vs 64-bit problem, but now libraries can not be found.					<br/>
+		&nbsp&nbsp&nbsp&nbsp
+		Continued trying to solve library loading problem, but was not successful.			<br/>
+	Started working on WiFi P2P Application to test data transfer.							<br/>
+</blockquote>
+
+<!------------------------------------------------------------------------------------>
+
+<b>2015.01.13</b>
+<blockquote>
+	After being unable to properly set up OpenCV and JArUco, 
+		the process was restarted from scratch.												<br/>
+		&nbsp&nbsp&nbsp&nbsp
+		OpenCV is properly configured and loads properly									<br/>
+		&nbsp&nbsp&nbsp&nbsp
+		Microsoft Visual C++ 2010 and aruco_msvc10 were downloaded							<br/>
+		&nbsp&nbsp&nbsp&nbsp
+		cmake was run to create <code>.dll</code>'s											<br/>
+		&nbsp&nbsp&nbsp&nbsp
+		Error Message: <code>Can't load IA 32-bit .dll on a AMD 64-bit platform</code>		<br/>
+</blockquote>
+
 <!------------------------------------------------------------------------------------>
 
 <b>2015.01.12</b>
@@ -27,7 +71,7 @@
 	Updated Dr. Kazanzides and Sungmin on progress and plans.								<br/>
 	Downloaded and set up OpenCV and ArUco for use in NetBeans.								<br/>
 		Was not able to run application using ArUco because of problems setting up linkers.	<br/>
-	Searched for other native Java AR libraries.											<br/>
+	Searched for alternate Java/Android AR libraries.										<br/>
 </blockquote>
 
 <!------------------------------------------------------------------------------------>
