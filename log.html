@@ -18,15 +18,59 @@
 <!---------------------------------------------------------------------------------------------->
 
 <font size="5"><b>Development of Wearable Intelligent Navigation System for Surgery</b></font>		<br/>
-<a href="/Files/WINSS_FallReport_Lakshminarayanan.pdf">Project Description (updated 2014.12.12)</a>	<br/><p>
+<a href="/Files/WINSS_FallReport_Lakshminarayanan.pdf">Project Description</a>						<br/><p>
+
+<!---------------------------------------------------------------------------------------------->
+<!---------------------------------------------------------------------------------------------->
+
+<b>2015.01.20</b>
+<blockquote>
+	Moverio glasses still not found. New pair of Moverio glasses was ordered.				<br/></p>
+
+	Set up DroidAR library. Since this is an Android Library Project, 
+		it is easier to implement in Android apps.											<br/>
+	Set up sample application using DroidAR library.										<br/></p>
+	
+	Studied and experimented with Real Time Databases, 
+		using <a href="https://www.firebase.com/">Firebase</a>								<br/>
+</blockquote>
+
+<!------------------------------------------------------------------------------------>
+
+<b>2015.01.19</b>
+<blockquote>
+	Moverio glasses were not found at desk. 
+		Box was found in another desk, but device was missing.								<br/></p>
+	
+	When continuing to work with ArUco, it was found that:									<br/>
+	<ul>
+		<li>CPU problems shown in Dependency Walker were because depends.exe was 64-bit		</li>
+		<li>32-bit version of Dependency Walker solved errors, but did not isolate problem	</li>
+		<li>Even though JArUco is a Java wrapper, it relies on the native C++ code,
+				which will be very difficult to implement on the smart glasses				</li>
+	</ul><</p>
+	
+	As a result, alternate libraries were researched:										<br/>
+	Metaio SDK																				<br/>
+	<ul>
+		<li>Commonly used and well documented library, but difficult to implement			</li>				
+		<li>Built using gradle with Android Studio											</li>
+		<li>Android Studio is good for UI development, but is difficult to use in general	</li>
+	</ul>
+	DroidAR
+	<ul>
+		<li>Not well documented, but easy to load and use									</li>
+		<li>Designed specifically for use with Android; buildable in Netbeans				</li>
+	</ul>
+</blockquote>
 
 <!------------------------------------------------------------------------------------>
 
 <b>2015.01.16</b>
 <blockquote>
 	Experimented with WiFi P2P app to begin working on connection to PC.					<br/>
-	Set up 32-bit Ubuntu VM for development. 
-		This may circumvent the problems that is currently halting the use of the ArUco package.	<br/>
+	Set up 32-bit Ubuntu VM for development. This may circumvent the problems 
+		that is currently halting the use of the ArUco package.								<br/>
 </blockquote>
 
 <!------------------------------------------------------------------------------------>
