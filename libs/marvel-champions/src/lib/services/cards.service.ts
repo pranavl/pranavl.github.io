@@ -1,47 +1,35 @@
 import { Injectable, WritableSignal, signal } from '@angular/core';
-import { ECardFaction, IAnyCard, ICardPack } from '../interfaces';
-import { CardsDatabaseHttpService } from './cdb.http-service';
+import { ICard } from '../interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CardsService {
-  readonly packsList: WritableSignal<ICardPack[]> = signal([]);
-  readonly loadedCards: WritableSignal<IAnyCard[]> = signal([]);
+  readonly deck$: WritableSignal<ICard[]> = signal([]);
 
-  constructor(private cdbService: CardsDatabaseHttpService) {}
+  // constructor(private cdbService: CardsDatabaseHttpService) {}
 
-  loadPacks() {
-    this.cdbService.getPacks().subscribe((packs) => this.packsList.set(packs));
+  getCardCodeSet(cards: ICard[]) {
+    return new Set(cards.map((card) => card.code));
   }
 
-  loadCardsInPack(packCode: string, factions: ECardFaction[]) {
-    this.cdbService.getCardsInPack(packCode).subscribe((cards) => {
-      // Filter by faction
-      const filteredCards = cards.filter((card) =>
-        factions.includes(card.faction_code)
-      );
-      // Update the list of loaded cards
-      this.loadedCards.mutate((value) => {
-        const cardMap = new Map<string, IAnyCard>(
-          value.map((v) => [v.code, v])
-        );
-        filteredCards.forEach((card) => cardMap.set(card.code, card));
-        return Array.from(cardMap.values());
-      });
+  addCardsToDeck(...cards: ICard[]) {
+    this.deck$.mutate((value) => {
+      const cardsInDeck = this.getCardCodeSet(value);
+      cards
+        .filter((card) => !cardsInDeck.has(card.code))
+        .forEach((card) => value.push(card));
     });
   }
 
-  unloadCardsInPack(packCode: string) {
-    this.loadedCards.mutate((value) =>
-      value.filter((card) => card.pack_code !== packCode)
+  removeCardsFromDeck(...cards: ICard[]) {
+    const cardsToRemove = this.getCardCodeSet(cards);
+    this.deck$.mutate((value) =>
+      value.filter((card) => !cardsToRemove.has(card.code))
     );
   }
 
-  resetPacksList() {
-    this.packsList.set([]);
-  }
   resetLoadedCards() {
-    this.loadedCards.set([]);
+    this.deck$.set([]);
   }
 }

@@ -1,0 +1,8 @@
+{
+  "/api/public": {
+    "target": "https://marvelcdb.com",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true
+  }
+}
