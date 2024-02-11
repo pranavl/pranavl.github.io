@@ -1,6 +1,6 @@
 import { Injectable, WritableSignal, computed, signal } from '@angular/core';
 import { CARDS_BY_SET } from '../data/cards-by-set';
-import { ICard } from '../interfaces';
+import { ICard, ICardSetInfo } from '../interfaces';
 import { CardsService } from '../services';
 
 export interface CardsSelectorOptionGroup {
@@ -15,11 +15,12 @@ export interface CardsSelectorOptionGroup {
 }
 
 @Injectable({ providedIn: 'root' })
-export class CardsSelectorPresenter {
+export class EncounterSetupPresenter {
   readonly cardSetListViewModel$ = computed(() =>
     this.buildSetListViewModel(this.cardsService.deck$())
   );
 
+  readonly selectedSet$: WritableSignal<ICardSetInfo> = signal(null);
   readonly cardsInSelectedSet$: WritableSignal<ICard[]> = signal([]);
 
   constructor(private cardsService: CardsService) {}
@@ -48,9 +49,13 @@ export class CardsSelectorPresenter {
   }
 
   updateSelectedSet(selectedSetCode) {
-    this.cardsInSelectedSet$.set(
-      CARDS_BY_SET.find((set) => set.card_set_code == selectedSetCode)
-        ?.cards_in_set
+    const cardSet = CARDS_BY_SET.find(
+      (set) => set.card_set_code == selectedSetCode
     );
+    this.selectedSet$.set({
+      card_set_code: cardSet.card_set_code,
+      card_set_name: cardSet.card_set_name,
+    });
+    this.cardsInSelectedSet$.set(cardSet?.cards_in_set);
   }
 }

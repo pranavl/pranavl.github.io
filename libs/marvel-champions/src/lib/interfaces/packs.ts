@@ -14,9 +14,12 @@ export interface ICardPack {
   id: number;
 }
 
-export interface ICardSet {
+export interface ICardSetInfo {
   card_set_code: string;
   card_set_name: string;
+}
+
+export interface ICardSet extends ICardSetInfo {
   pack_code: string;
   pack_name: string;
   cards_in_set: ICard[];
