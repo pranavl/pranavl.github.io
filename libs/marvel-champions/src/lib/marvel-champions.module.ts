@@ -3,10 +3,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { EncounterSetupComponentModule } from './components';
 import { EncounterSetupPresenter } from './presenters/encounter-setup.presenter';
-import { CardsDatabaseHttpService, CardsService } from './services';
+import { CardsDatabaseHttpService, GameSetupService } from './services';
 
 @NgModule({
-  providers: [EncounterSetupPresenter, CardsService, CardsDatabaseHttpService],
+  providers: [EncounterSetupPresenter, GameSetupService, CardsDatabaseHttpService],
   imports: [CommonModule, HttpClientModule, EncounterSetupComponentModule],
   declarations: [],
   exports: [EncounterSetupComponentModule],

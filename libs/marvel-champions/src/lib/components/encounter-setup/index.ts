@@ -5,13 +5,13 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ListboxModule } from 'primeng/listbox';
 import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presenter';
-import { CardsDatabaseHttpService, CardsService } from '../../services';
+import { CardsDatabaseHttpService, GameSetupService } from '../../services';
 import { CardComponentModule } from '../cards';
 import { CardsSelectorComponent } from './card-set-selector.component';
 import { SelectableCardComponent } from './selectable-card.component';
 
 @NgModule({
-  providers: [EncounterSetupPresenter, CardsService, CardsDatabaseHttpService],
+  providers: [EncounterSetupPresenter, GameSetupService, CardsDatabaseHttpService],
   imports: [
     CommonModule,
     HttpClientModule,

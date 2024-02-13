@@ -7,8 +7,8 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
     <div class="tw-flex tw-h-[100vh]">
       <!-- List of sets -->
       <p-listbox
-        class="tw-w-[20rem] tw-overflow-y-auto"
-        [options]="cardSetList$()"
+        class="tw-w-[25rem] tw-overflow-y-auto"
+        [options]="setListViewModel$()"
         [group]="true"
         (onChange)="onChangeSelectedSet($event)"
         [filter]="true"
@@ -19,61 +19,91 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
           </div>
         </ng-template>
         <ng-template let-item pTemplate="item">
-          <div class="tw-flex tw-text-sm">
-            <span>{{ item.label }}</span>
+          <div
+            class="tw-flex tw-flex-row tw-w-full tw-justify-between tw-text-sm"
+          >
+            <span> {{ item.label }}</span>
+            <div *ngIf="item.numCardsInGame + item.numCardsSetAside > 0">
+              <span
+                class="tw-px-2 tw-py-1 tw-rounded-l-full tw-bg-orange-100"
+                >{{ item.numCardsInGame }}</span
+              >
+              <span class="tw-px-2 tw-py-1 tw-rounded-r-full tw-bg-gray-100">{{
+                item.numCardsSetAside
+              }}</span>
+            </div>
           </div>
         </ng-template>
       </p-listbox>
 
       <!-- Right content -->
       <div class="tw-flex tw-flex-col tw-w-full">
-        <!-- Header -->
-        <div
-          class="tw-flex tw-min-h-[3rem] tw-px-4 tw-bg-orange-200 tw-items-center tw-justify-between"
-        >
-          <div *ngIf="selectedSet$(); else noSetSelected;">
-            {{ selectedSet$().card_set_name }}
-          </div>
+        <div *ngIf="selectedSetViewModel$() as vm; else noSetSelected">
+          <!-- Header -->
+          <div
+            class="tw-flex tw-min-h-[3rem] tw-px-4 tw-bg-orange-200 tw-items-center tw-justify-between"
+          >
+            {{ vm.setInfo?.card_set_name }}
 
-          <ng-template #noSetSelected>
-            Select a set
-          </ng-template>
-
-          <div class="tw-flex tw-gap-2">
-            <button
-              pButton
-              class="p-button-rounded p-button-primary tw-text-sm"
-              icon="fa-solid fa-plus"
-              label="Add"
-              [disabled]="!selectedSet$()"
-            ></button>
-            <button
-              pButton
-              class="p-button-rounded p-button-secondary tw-text-sm"
-              icon="fa-solid fa-forward"
-              label="Set aside"
-              [disabled]="!selectedSet$()"
-            ></button>
+            <div class="tw-flex tw-gap-2">
+              <!-- Add/remove cards from game -->
+              <button
+                *ngIf="vm.numCardsInGame === 0"
+                pButton
+                class="p-button-rounded p-button-primary tw-text-sm"
+                icon="fa-solid fa-plus"
+                label="Add"
+                (click)="addCardsInSetToGame()"
+              ></button>
+              <button
+                *ngIf="vm.numCardsInGame !== 0"
+                pButton
+                class="p-button-rounded p-button-primary tw-text-sm"
+                icon="fa-solid fa-minus"
+                label="Remove"
+                (click)="removeCardsInSetFromGame()"
+              ></button>
+              <!-- Add remove cards from "set aside" -->
+              <button
+                *ngIf="vm.numCardsSetAside === 0"
+                pButton
+                class="p-button-rounded p-button-secondary tw-text-sm"
+                icon="fa-solid fa-forward"
+                label="Set aside"
+                (click)="addCardsInSetToSetAside()"
+              ></button>
+              <button
+                *ngIf="vm.numCardsSetAside !== 0"
+                pButton
+                class="p-button-rounded p-button-secondary tw-text-sm"
+                icon="fa-solid fa-reply"
+                label="Remove from set aside"
+                (click)="removeCardsInSetFromSetAside()"
+              ></button>
+            </div>
           </div>
-        </div>
-        <!-- Card list -->
-        <div
-          class="tw-flex tw-flex-wrap tw-gap-4 tw-w-full tw-overflow-y-auto tw-p-4 tw-justify-center"
-          cdkScrollable
-        >
-          <div *ngIf="cardsToSelect$().length === 0; else cardsList">
-            Select a set
-          </div>
-
-          <ng-template #cardsList>
-            <div *ngFor="let card of cardsToSelect$()">
+          <!-- Card list -->
+          <div
+            class="tw-flex tw-flex-wrap tw-gap-4 tw-w-full tw-overflow-y-auto tw-p-4 tw-justify-center"
+            cdkScrollable
+          >
+            <div
+              *ngFor="let card of selectedSetViewModel$()?.cardsInSelectedSet"
+            >
               <mc-selectable-card
                 [card]="card"
                 [showImage]="true"
               ></mc-selectable-card>
             </div>
-          </ng-template>
+          </div>
         </div>
+
+        <!-- If no set has been selected yet -->
+        <ng-template #noSetSelected>
+          <div class="tw-flex tw-items-center tw-justify-center tw-h-full">
+            Select a set
+          </div>
+        </ng-template>
       </div>
     </div>
   `,
@@ -93,14 +123,36 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
   ],
 })
 export class CardsSelectorComponent {
-  public cardSetList$ = this._presenter.cardSetListViewModel$;
-  public cardsToSelect$ = this._presenter.cardsInSelectedSet$;
-  public selectedSet$ = this._presenter.selectedSet$;
+  public setListViewModel$ = this._presenter.cardSetListViewModel$;
+  public selectedSetViewModel$ = this._presenter.cardSetViewModel$;
 
   constructor(private _presenter: EncounterSetupPresenter) {}
 
   onChangeSelectedSet($event) {
     this._presenter.updateSelectedSet($event?.value);
-    console.log(this.cardsToSelect$());
+  }
+
+  addCardsInSetToGame() {
+    this._presenter.addCardsToGame(
+      ...this.selectedSetViewModel$().cardsInSelectedSet
+    );
+  }
+
+  removeCardsInSetFromGame() {
+    this._presenter.removeCardsFromGame(
+      ...this.selectedSetViewModel$().cardsInSelectedSet
+    );
+  }
+
+  addCardsInSetToSetAside() {
+    this._presenter.addCardsToSetAside(
+      ...this.selectedSetViewModel$().cardsInSelectedSet
+    );
+  }
+
+  removeCardsInSetFromSetAside() {
+    this._presenter.removeCardsFromSetAside(
+      ...this.selectedSetViewModel$().cardsInSelectedSet
+    );
   }
 }

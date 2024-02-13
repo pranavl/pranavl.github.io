@@ -1,7 +1,7 @@
 import { Injectable, WritableSignal, computed, signal } from '@angular/core';
 import { CARDS_BY_SET } from '../data/cards-by-set';
 import { ICard, ICardSetInfo } from '../interfaces';
-import { CardsService } from '../services';
+import { GameSetupService } from '../services';
 
 export interface CardsSelectorOptionGroup {
   label: string;
@@ -10,23 +10,40 @@ export interface CardsSelectorOptionGroup {
     label: string;
     value: string;
     cardsInSet: number;
-    cardsSelected: number;
+    numCardsInGame: number;
+    numCardsSetAside: number;
   }[];
 }
 
+export interface SetSelectorViewModel {
+  setInfo: ICardSetInfo;
+  cardsInSelectedSet: ICard[];
+  numCardsInGame: number;
+  numCardsSetAside: number;
+}
+
+const countCardsInMap = (cardMap: Map<string, ICard>, cards: ICard[]) => {
+  const sumCardQuantity = (agg, c) => {
+    return agg + c.quantity;
+  };
+  return cards
+    .filter((card) => cardMap.has(card.code))
+    .reduce(sumCardQuantity, 0);
+};
+
 @Injectable({ providedIn: 'root' })
 export class EncounterSetupPresenter {
-  readonly cardSetListViewModel$ = computed(() =>
-    this.buildSetListViewModel(this.cardsService.deck$())
-  );
+  constructor(private setupService: GameSetupService) {}
 
-  readonly selectedSet$: WritableSignal<ICardSetInfo> = signal(null);
-  readonly cardsInSelectedSet$: WritableSignal<ICard[]> = signal([]);
+  private readonly selectedSetCode$: WritableSignal<string> = signal(null);
+  
+  public readonly cardsInGame$ = this.setupService.cardsInGame$;
+  public readonly cardsSetAside$ = this.setupService.cardsSetAside$;
 
-  constructor(private cardsService: CardsService) {}
+  readonly cardSetListViewModel$ = computed((): CardsSelectorOptionGroup[] => {
+    const cardsInGame = this.setupService.cardsInGame$();
+    const cardsSetAside = this.setupService.cardsSetAside$();
 
-  private buildSetListViewModel(deck: ICard[]): CardsSelectorOptionGroup[] {
-    const cardsInDeck = this.cardsService.getCardCodeSet(deck);
     const cardsByPack = new Map<string, CardsSelectorOptionGroup>();
     CARDS_BY_SET.forEach((cardSet) => {
       if (!cardsByPack.has(cardSet.pack_code)) {
@@ -36,26 +53,57 @@ export class EncounterSetupPresenter {
           items: [],
         });
       }
+
       cardsByPack.get(cardSet.pack_code).items.push({
         label: cardSet.card_set_name,
         value: cardSet.card_set_code,
         cardsInSet: cardSet.cards_in_set.length,
-        cardsSelected: cardSet.cards_in_set.filter((card) =>
-          cardsInDeck.has(card.code)
-        ).length,
+        numCardsInGame: countCardsInMap(cardsInGame, cardSet.cards_in_set),
+        numCardsSetAside: countCardsInMap(cardsSetAside, cardSet.cards_in_set),
       });
     });
     return Array.from(cardsByPack.values());
+  });
+
+  readonly cardSetViewModel$ = computed((): SetSelectorViewModel => {
+    const cardSet = CARDS_BY_SET.find(
+      (set) => set.card_set_code == this.selectedSetCode$()
+    );
+    if (!cardSet) {
+      return null;
+    }
+
+    const cardsInGame = this.setupService.cardsInGame$();
+    const cardsSetAside = this.setupService.cardsSetAside$();
+
+    return {
+      setInfo: {
+        card_set_code: cardSet.card_set_code,
+        card_set_name: cardSet.card_set_name,
+      },
+      cardsInSelectedSet: cardSet?.cards_in_set,
+      numCardsInGame: countCardsInMap(cardsInGame, cardSet?.cards_in_set),
+      numCardsSetAside: countCardsInMap(cardsSetAside, cardSet?.cards_in_set),
+    };
+  });
+
+  updateSelectedSet(selectedSetCode: string) {
+    this.selectedSetCode$.set(selectedSetCode);
   }
 
-  updateSelectedSet(selectedSetCode) {
-    const cardSet = CARDS_BY_SET.find(
-      (set) => set.card_set_code == selectedSetCode
-    );
-    this.selectedSet$.set({
-      card_set_code: cardSet.card_set_code,
-      card_set_name: cardSet.card_set_name,
-    });
-    this.cardsInSelectedSet$.set(cardSet?.cards_in_set);
+  addCardsToGame(...cards: ICard[]) {
+    this.setupService.addCardsToGame(...cards);
+  }
+
+  removeCardsFromGame(...cards: ICard[]) {
+    this.setupService.removeCardsFromGame(...cards);
+  }
+
+  addCardsToSetAside(...cards: ICard[]) {
+    this.setupService.addCardsToSetAside(...cards);
+  }
+
+  removeCardsFromSetAside(...cards: ICard[]) {
+    this.setupService.removeCardsFromSetAside(...cards);
   }
 }
