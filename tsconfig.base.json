@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "connections": ["libs/connections/src/index.ts"],
       "marvel-champions": ["libs/marvel-champions/src/index.ts"]
     },
     "strict": true,

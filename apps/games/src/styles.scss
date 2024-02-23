@@ -1,0 +1,11 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "tailwindcss/base" layer(tailwindcss);
+@import "tailwindcss/components" layer(tailwindcss);
+@import "tailwindcss/utilities" layer(tailwindcss);
+@import "primeng/resources/themes/saga-blue/theme.css";
+@import "primeng/resources/primeng.css";
+
+@import '~@fortawesome/fontawesome-free/css/fontawesome.min.css';
+@import '~@fortawesome/fontawesome-free/css/solid.min.css';
+@import '~@fortawesome/fontawesome-free/css/regular.min.css';
