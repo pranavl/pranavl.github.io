@@ -50,7 +50,7 @@ export class ConnectionsGameService {
   private formatUrl() {
     // private API_URL = 'https://www.nytimes.com/svc/connections/v2';
     const date = new Date();
-    const day = date.getDate() - 2;
+    const day = date.getDate();
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
     const year = date.getFullYear();
     return `/nyt-connections/${year}-${month}-${day}.json`;
@@ -216,7 +216,7 @@ export class ConnectionsGameService {
   /**
    * Shuffle the cards in the game that are not in the correct group
    */
-  public shuffleCardsInGame() {
+  public shuffleCards() {
     this.gameState$.mutate((s) => {
       // Get a list of cards that are not in the right categories
       const cardsToShuffle = [];

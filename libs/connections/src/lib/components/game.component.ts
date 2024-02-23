@@ -179,7 +179,7 @@ export class ConnectionsGameComponent {
   }
 
   onClickShuffle() {
-    this.gameService.shuffleCardsInGame();
+    this.gameService.shuffleCards();
   }
 
   onClickSubmit() {
