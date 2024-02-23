@@ -1,4 +1,5 @@
 import { Component, ViewEncapsulation, computed } from '@angular/core';
+import { GameStatus } from '../interfaces';
 import { ConnectionsGameService } from '../services/game.service';
 
 @Component({
@@ -6,13 +7,21 @@ import { ConnectionsGameService } from '../services/game.service';
   template: `
     <div *ngIf="game$() as game" class="tw-flex tw-flex-col tw-gap-8">
       <!-- Board -->
-      <div class="tw-grid tw-grid-cols-4 tw-gap-2 tw-max-w-[80vw] tw-pt-10">
-        <ng-container *ngFor="let row of game.categories; index as rowIdx">
-          <!-- Correct row -->
+      <div
+        class="tw-shrink tw-grid tw-grid-cols-4 tw-gap-2 tw-min-w-[50vw] tw-max-w-[90vw] tw-pt-10"
+      >
+        <ng-container
+          *ngFor="
+            let row of game.categories;
+            index as rowIdx;
+            trackBy: _trackByRowIdx
+          "
+        >
+          <!-- Answer row -->
           <div
             *ngIf="row.solved; else cardRow"
             [ngClass]="[
-              'tw-min-h-[88px] tw-w-full tw-col-span-4 tw-flex tw-flex-col tw-rounded-lg tw-items-center tw-justify-center tw-mb-4',
+              'tw-flex tw-min-h-[88px] tw-w-full tw-col-span-4 tw-flex tw-flex-col tw-rounded-lg tw-items-center tw-justify-center',
               COLOR_CLASSES[row.solved.level]
             ]"
           >
@@ -21,20 +30,44 @@ import { ConnectionsGameService } from '../services/game.service';
             </span>
             <span>{{ row.cards.join(', ') }}</span>
           </div>
+
           <!-- Cards -->
           <ng-template #cardRow>
+            <!-- class="tw-px-10 tw-py-8 tw-bg-gray-100 tw-rounded-lg tw-text-center tw-font-bold" -->
             <div
               *ngFor="let card of row.cards; index as colIdx"
-              class="tw-px-10 tw-py-8 tw-bg-gray-100 tw-rounded-lg tw-text-center tw-font-bold tw-mb-4"
+              [ngClass]="[
+                'tw-h-[88px] tw-flex tw-bg-gray-100 tw-rounded-lg tw-justify-center tw-items-center tw-text-wrap tw-cursor-pointer',
+                selectedCard$()?.row === rowIdx &&
+                selectedCard$()?.column === colIdx
+                  ? 'tw-bg-gray-300'
+                  : 'tw-bg-gray-100'
+              ]"
               pDraggable
               pDroppable
               (onDragStart)="dragStart(rowIdx, colIdx)"
               (onDrop)="onDrop(rowIdx, colIdx)"
+              (click)="clickCard(rowIdx, colIdx)"
             >
-              {{ card }}
+              <span
+                [ngClass]="[
+                  'tw-font-bold tw-max-w-[80px] tw-text-wrap tw-text-center',
+                  card.length > 6 ? 'tw-text-sm' : ''
+                ]"
+              >
+                {{ card }}
+              </span>
             </div>
           </ng-template>
-          <!-- <div>{{ row.numCorrect === 3 ? 'One away' : '' }}</div> -->
+
+          <!-- Num correct -->
+          <div class="tw-col-span-4 tw-mb-4">
+            <p-progressBar
+              [value]="(row.numCorrect / 4) * 100"
+              styleClass="!tw-h-[5px] !tw-bg-gray-300"
+              [showValue]="false"
+            ></p-progressBar>
+          </div>
         </ng-container>
       </div>
 
@@ -43,9 +76,9 @@ import { ConnectionsGameService } from '../services/game.service';
         class="tw-flex tw-flex-row tw-items-center tw-justify-center tw-gap-4"
       >
         <div
-          class="tw-flex tw-flex-row tw-justify-start tw-items-center tw-gap-2 tw-min-w-[15rem]"
+          class="tw-flex tw-flex-row tw-justify-start tw-items-center tw-gap-2"
         >
-          <span>Tries left:</span>
+          <span>Tries:</span>
           <ng-container *ngFor="let life of lives$()">
             <i [ngClass]="['fas fa-star', !life ? 'tw-opacity-0' : '']"></i>
           </ng-container>
@@ -55,6 +88,7 @@ import { ConnectionsGameService } from '../services/game.service';
           pButton
           class="p-button-rounded p-button-outlined p-button-secondary"
           label="Shuffle"
+          [disabled]="!canPlay$()"
           (click)="onClickShuffle()"
         ></button>
         <!-- Submit -->
@@ -62,7 +96,28 @@ import { ConnectionsGameService } from '../services/game.service';
           pButton
           class="p-button-rounded p-button-secondary"
           label="Submit"
+          [disabled]="!game.userHasPlayed || !isPlaying$()"
           (click)="onClickSubmit()"
+        ></button>
+      </div>
+
+      <!-- Dev tools -->
+      <div
+        class="tw-flex tw-flex-row tw-items-center tw-justify-center tw-gap-4"
+      >
+        <!-- Solve -->
+        <button
+          pButton
+          class="p-button-rounded p-button-warning"
+          label="Reset"
+          (click)="_onClickReset()"
+        ></button>
+        <!-- Solve -->
+        <button
+          pButton
+          class="p-button-rounded p-button-success"
+          label="Solve"
+          (click)="_onClickSolve()"
         ></button>
       </div>
     </div>
@@ -88,6 +143,16 @@ export class ConnectionsGameComponent {
     return lives;
   });
 
+  public readonly canPlay$ = computed(
+    () => ![GameStatus.OVER, GameStatus.WIN].includes(this.game$().gameStatus)
+  );
+
+  public readonly isPlaying$ = computed(
+    () => this.game$().gameStatus === GameStatus.PLAYING
+  );
+
+  public readonly selectedCard$ = this.gameService.selectedCard$;
+
   public COLOR_CLASSES = [
     'tw-bg-yellow-200',
     'tw-bg-green-400',
@@ -96,6 +161,14 @@ export class ConnectionsGameComponent {
   ];
 
   constructor(private gameService: ConnectionsGameService) {}
+
+  _trackByRowIdx(index: number) {
+    return `row-${index}`;
+  }
+
+  clickCard(rowIdx: number, colIdx: number) {
+    this.gameService.clickCard(rowIdx, colIdx);
+  }
 
   dragStart(rowIdx: number, colIdx: number) {
     this.gameService.dragCard(rowIdx, colIdx);
@@ -111,5 +184,15 @@ export class ConnectionsGameComponent {
 
   onClickSubmit() {
     this.gameService.updateGame();
+  }
+
+  // Dev functions ------------------------------------------------------------
+
+  _onClickReset() {
+    this.gameService._reset();
+  }
+
+  _onClickSolve() {
+    this.gameService._solve();
   }
 }

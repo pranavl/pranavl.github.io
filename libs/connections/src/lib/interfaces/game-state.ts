@@ -1,3 +1,10 @@
+export enum GameStatus {
+  NEW,
+  PLAYING,
+  WIN,
+  OVER,
+}
+
 export interface PickedUpCard {
   row: number;
   column: number;
@@ -16,5 +23,6 @@ export interface GameState {
   categories: GameCategory[];
   livesRemaining: number;
   maxLives: number;
+  gameStatus: GameStatus;
   userHasPlayed: boolean;
 }

@@ -1,12 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, signal } from '@angular/core';
 import { GAME_CONFIG } from '../config';
-import { Card, ConnectionsGameData } from '../interfaces';
 import {
+  Card,
+  ConnectionsGameData,
   GameCategory,
   GameState,
+  GameStatus,
   PickedUpCard,
-} from '../interfaces/game-state';
+} from '../interfaces';
 import { shuffleArray } from '../utils';
 
 @Injectable({
@@ -36,7 +38,7 @@ export class ConnectionsGameService {
   /**
    * Row and column index of a card that is being swapped
    */
-  private _movingCard$ = signal<PickedUpCard>(null);
+  public selectedCard$ = signal<PickedUpCard>(null);
 
   constructor(private _http: HttpClient) {
     this.getGameData();
@@ -48,7 +50,7 @@ export class ConnectionsGameService {
   private formatUrl() {
     // private API_URL = 'https://www.nytimes.com/svc/connections/v2';
     const date = new Date();
-    const day = date.getDate();
+    const day = date.getDate() - 2;
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
     const year = date.getFullYear();
     return `/nyt-connections/${year}-${month}-${day}.json`;
@@ -78,9 +80,12 @@ export class ConnectionsGameService {
     const game: GameState = {
       categories: chunks.map((chunk) => ({
         cards: chunk.map((c) => c.content),
+        numCorrect: 0,
+        solved: null,
       })),
       livesRemaining: GAME_CONFIG.STARTING_LIVES,
       maxLives: GAME_CONFIG.STARTING_LIVES,
+      gameStatus: GameStatus.NEW,
       userHasPlayed: false,
     };
     this.gameState$.set(game);
@@ -92,7 +97,7 @@ export class ConnectionsGameService {
    * @param columnIndex column index where a card is being dragged from
    */
   public dragCard(rowIndex: number, columnIndex: number) {
-    this._movingCard$.set({ row: rowIndex, column: columnIndex });
+    this.selectedCard$.set({ row: rowIndex, column: columnIndex });
   }
 
   /**
@@ -108,6 +113,8 @@ export class ConnectionsGameService {
         s.categories[row2].cards[col2],
         s.categories[row1].cards[col1],
       ];
+      s.gameStatus = GameStatus.PLAYING;
+      s.userHasPlayed = true;
     });
   }
 
@@ -117,13 +124,31 @@ export class ConnectionsGameService {
    * @param columnIndex column index where a card is being dragged from
    */
   public dropCard(rowIndex: number, columnIndex: number) {
-    const dragged = this._movingCard$();
+    const dragged = this.selectedCard$();
     if (!dragged) {
+      return;
+    }
+    if (dragged.row == rowIndex && dragged.column == columnIndex) {
+      this.selectedCard$.set(null);
       return;
     }
 
     this.swapCards(dragged.row, dragged.column, rowIndex, columnIndex);
-    this._movingCard$.set(null);
+    this.selectedCard$.set(null);
+  }
+
+  /**
+   * When a card is clicked
+   * @param rowIndex row index where a card is being dragged from
+   * @param columnIndex column index where a card is being dragged from
+   */
+  public clickCard(rowIndex: number, columnIndex: number) {
+    const selected = this.selectedCard$();
+    if (!selected) {
+      this.dragCard(rowIndex, columnIndex);
+      return;
+    }
+    this.dropCard(rowIndex, columnIndex);
   }
 
   /**
@@ -154,12 +179,13 @@ export class ConnectionsGameService {
    * Update the game state after a turn has been taken
    */
   public updateGame() {
-    this.gameState$.update((gameState) => {
+    this.selectedCard$.set(null);
+    this.gameState$.mutate((s) => {
       // Keep track of whether there are any misses
       let hasMiss: boolean = false;
 
       // Check each row for matches
-      const categories: GameCategory[] = gameState.categories.map((cat) => {
+      const updatedCategories = s.categories.map((cat) => {
         const matches = this.checkMatches(cat.cards);
         if (!matches.solved) {
           hasMiss = true;
@@ -168,14 +194,22 @@ export class ConnectionsGameService {
       });
 
       // Update the game state
-      return {
-        categories,
-        livesRemaining: hasMiss
-          ? gameState.livesRemaining - 1
-          : gameState.livesRemaining,
-        maxLives: gameState.maxLives,
-        userHasPlayed: true,
-      };
+      s.categories = updatedCategories;
+      s.userHasPlayed = false;
+
+      // If all categories are correct
+      if (!hasMiss) {
+        s.gameStatus = GameStatus.WIN;
+        return;
+      }
+
+      // Otherwise, lose a life
+      s.livesRemaining = s.livesRemaining - 1;
+      if (s.livesRemaining == 0) {
+        s.gameStatus = GameStatus.OVER;
+      } else {
+        s.gameStatus = GameStatus.PLAYING;
+      }
     });
   }
 
@@ -183,10 +217,10 @@ export class ConnectionsGameService {
    * Shuffle the cards in the game that are not in the correct group
    */
   public shuffleCardsInGame() {
-    this.gameState$.update((gameState) => {
+    this.gameState$.mutate((s) => {
       // Get a list of cards that are not in the right categories
       const cardsToShuffle = [];
-      gameState.categories.forEach((cat) => {
+      s.categories.forEach((cat) => {
         if (cat.solved) {
           return;
         }
@@ -198,7 +232,7 @@ export class ConnectionsGameService {
 
       // Put them back in the game
       let i = 0;
-      gameState.categories.forEach((cat) => {
+      s.categories.forEach((cat) => {
         if (cat.solved) {
           return;
         }
@@ -206,9 +240,25 @@ export class ConnectionsGameService {
           cat.cards[j] = shuffled[i];
         }
       });
-
-      return gameState;
+      s.userHasPlayed = true;
+      s.gameStatus = GameStatus.PLAYING;
     });
   }
 
+  // Dev functions ------------------------------------------------------------
+
+  public _reset() {
+    this.initGame();
+  }
+
+  public _solve() {
+    const answers = this._answers$();
+    this.gameState$.mutate((s) => {
+      s.categories.forEach((cat, i) => {
+        cat.cards = Array.from(answers[i].cards);
+      });
+      s.userHasPlayed = true;
+      s.gameStatus = GameStatus.PLAYING;
+    });
+  }
 }
