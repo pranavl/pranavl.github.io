@@ -9,10 +9,16 @@ export const GAME_CONFIG = {
  * Classes for completed categories
  */
 export const CATEGORY_COLORS = [
+  // Gray (miss)
+  'tw-bg-gray-200',
+  // Yellow
   'tw-bg-yellow-200',
-  'tw-bg-green-400',
+  // Green
+  'tw-bg-lime-400',
+  // Blue
   'tw-bg-blue-200',
-  'tw-bg-purple-400',
+  // Purple
+  'tw-bg-purple-300',
 ];
 
 /**

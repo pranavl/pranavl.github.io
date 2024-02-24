@@ -8,6 +8,7 @@ import {
   GameState,
   GameStatus,
   PickedUpCard,
+  Score,
 } from '../interfaces';
 import { copyToClipboard, shuffleArray } from '../utils';
 
@@ -28,13 +29,14 @@ export class ConnectionsGameService {
       name: cat.title,
       cards: new Set(cat.cards.map((c) => c.content)),
       icon: ICONS[i],
+      level: i + 1,
     }))
   );
 
   /**
    * Track the user's score
    */
-  private _score$ = signal<string[]>([]);
+  public score$ = signal<Score>({ icons: [], levels: [] });
 
   /**
    * Game state object
@@ -201,7 +203,7 @@ export class ConnectionsGameService {
    */
   private _checkMatches(cards: string[]): GameCategory {
     return this._answers$()
-      .map((a, idx) => {
+      .map((a) => {
         const numCorrect = cards
           .map((c) => a.cards.has(c))
           .filter(Boolean).length;
@@ -212,7 +214,7 @@ export class ConnectionsGameService {
             numCorrect === 4
               ? {
                   name: a.name,
-                  level: idx,
+                  level: a.level,
                 }
               : null,
         };
@@ -222,23 +224,35 @@ export class ConnectionsGameService {
 
   private _updateScore(categories: GameCategory[]) {
     const answers = this._answers$();
-    const score = categories.map((c) => {
-      if (c.numCorrect < 4) {
-        return GRAY_SQUARE;
-      }
-      return answers.find((a) => a.name == c.solved.name)?.icon;
+
+    this.score$.mutate((s) => {
+      const levels = [];
+      const icons = [];
+      categories.forEach((c) => {
+        if (c.numCorrect < 4) {
+          levels.push(0);
+          icons.push(GRAY_SQUARE);
+          return;
+        }
+
+        const found = answers.find((a) => a.name == c.solved.name);
+        levels.push(found.level);
+        icons.push(found.icon);
+      });
+
+      s.levels.push(levels);
+      s.icons.push(icons.join(''));
     });
-    this._score$.mutate((s) => s.push(score.join('')));
   }
 
   private _resetScore() {
-    this._score$.set([]);
+    this.score$.set({ icons: [], levels: [] });
   }
 
   private _formatScoreText(): string {
-    return `Connections++ (#${this.puzzle$().id})\n${this._score$().join(
-      '\n'
-    )}`;
+    return `Connections++\nPuzzle #${
+      this.puzzle$().id
+    }\n${this.score$()?.icons?.join('\n')}`;
   }
 
   /**
@@ -285,6 +299,24 @@ export class ConnectionsGameService {
    */
   public shareScore() {
     copyToClipboard(this._formatScoreText());
+  }
+
+  public solveForGameOver() {
+    const answers = this._answers$();
+    this.gameState$.mutate((s) => {
+      const solvedCategories = new Set(
+        s.categories.filter((cat) => !!cat.solved).map((cat) => cat.solved.name)
+      );
+      s.categories.forEach((cat) => {
+        if (cat.solved) {
+          return;
+        }
+        const solution = answers.find((a) => !solvedCategories.has(a.name));
+        solvedCategories.add(solution.name);
+        cat.cards = Array.from(solution.cards);
+        cat.solved = { name: solution.name, level: solution.level };
+      });
+    });
   }
 
   // Dev functions ------------------------------------------------------------

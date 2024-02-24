@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, computed } from '@angular/core';
+import { Component, ViewEncapsulation, computed, effect } from '@angular/core';
 import { CATEGORY_COLORS } from '../config';
 import { GameStatus } from '../interfaces';
 import { ConnectionsGameService } from '../services/game.service';
@@ -12,7 +12,7 @@ import { ConnectionsGameService } from '../services/game.service';
       </div>
       <!-- Board -->
       <div
-        class="tw-shrink tw-grid tw-grid-cols-4 tw-gap-2 tw-min-w-[50vw] tw-max-w-[90vw]"
+        class="tw-grid tw-grid-cols-4 tw-gap-2 tw-min-w-[60vw] tw-max-w-[90vw]"
       >
         <ng-container
           *ngFor="
@@ -41,7 +41,7 @@ import { ConnectionsGameService } from '../services/game.service';
             <div
               *ngFor="let card of row.cards; index as colIdx"
               [ngClass]="[
-                'tw-h-[88px] tw-flex tw-bg-gray-100 tw-rounded-lg tw-justify-center tw-items-center tw-text-wrap tw-cursor-pointer',
+                'tw-min-w-[80px] tw-h-[88px] tw-flex tw-bg-gray-100 tw-rounded-lg tw-justify-center tw-items-center tw-text-wrap tw-cursor-pointer',
                 selectedCard$()?.row === rowIdx &&
                 selectedCard$()?.column === colIdx
                   ? 'tw-bg-gray-300'
@@ -75,25 +75,27 @@ import { ConnectionsGameService } from '../services/game.service';
         </ng-container>
       </div>
 
-      <!-- Bottom row -->
+      <!-- Lives remaining -->
+      <div
+        class="tw-flex tw-flex-row tw-justify-center tw-items-center tw-gap-2"
+      >
+        <span class="tw-font-light">Mistakes remaining:</span>
+        <ng-container
+          *ngFor="let life of lives$(); index as i; trackBy: _trackByLife"
+        >
+          <i
+            [ngClass]="[
+              'fas fa-star tw-transition-opacity tw-text-gray-600',
+              !life ? 'tw-opacity-0' : 'tw-opacity-1'
+            ]"
+          ></i>
+        </ng-container>
+      </div>
+
+      <!-- Buttons -->
       <div
         class="tw-flex tw-flex-row tw-items-center tw-justify-center tw-gap-4"
       >
-        <div
-          class="tw-flex tw-flex-row tw-justify-start tw-items-center tw-gap-2"
-        >
-          <span>Tries:</span>
-          <ng-container
-            *ngFor="let life of lives$(); index as i; trackBy: _trackByLife"
-          >
-            <i
-              [ngClass]="[
-                'fas fa-star tw-transition-opacity tw-text-gray-600',
-                !life ? 'tw-opacity-0' : 'tw-opacity-1'
-              ]"
-            ></i>
-          </ng-container>
-        </div>
         <!-- Shuffle -->
         <button
           pButton
@@ -104,11 +106,20 @@ import { ConnectionsGameService } from '../services/game.service';
         ></button>
         <!-- Submit -->
         <button
+          *ngIf="canPlay$()"
           pButton
           class="p-button-rounded p-button-secondary"
           label="Submit"
           [disabled]="!game.userHasPlayed || !isPlaying$()"
           (click)="onClickSubmit()"
+        ></button>
+        <!-- Show results -->
+        <button
+          *ngIf="!canPlay$()"
+          pButton
+          class="p-button-rounded p-button-outlined p-button-secondary"
+          label="See results"
+          (click)="onShowResults()"
         ></button>
       </div>
 
@@ -131,6 +142,52 @@ import { ConnectionsGameService } from '../services/game.service';
           (click)="_onClickSolve()"
         ></button>
       </div>
+
+      <!-- End of game dialog -->
+      <p-dialog
+        [header]="endOfGameDialogHeader"
+        [(visible)]="endOfGameDialogVisible"
+        [style]="{ 'max-width': '450px', 'width': '80vw' }"
+        [draggable]="false"
+        [modal]="true"
+        [dismissableMask]="true"
+        (onHide)="onShowSolution()"
+      >
+        <!-- Grid of colors -->
+        <div
+          class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-6"
+        >
+          <span>Your results</span>
+
+          <div class="tw-flex tw-flex-col tw-gap-1">
+            <div
+              *ngFor="let row of score$().levels"
+              class="tw-flex tw-flex-row tw-gap-1"
+            >
+              <span
+                *ngFor="let col of row"
+                [ngClass]="[
+                  'tw-w-[2rem] tw-h-[2rem] tw-rounded-md',
+                  COLOR_CLASSES[col]
+                ]"
+              ></span>
+            </div>
+          </div>
+
+          <!-- Share -->
+          <button
+            pButton
+            class="p-button-rounded p-button-secondary p-button-outlined"
+            [label]="
+              resultsCopiedToClipboard
+                ? 'Copied to clipboard!'
+                : 'Share your results'
+            "
+            [disabled]="resultsCopiedToClipboard"
+            (click)="onClickShare()"
+          ></button>
+        </div>
+      </p-dialog>
     </div>
   `,
   styles: [
@@ -145,6 +202,8 @@ import { ConnectionsGameService } from '../services/game.service';
 export class ConnectionsGameComponent {
   public readonly game$ = this.gameService.gameState$;
 
+  public readonly score$ = this.gameService.score$;
+
   public readonly lives$ = computed(() => {
     const gameState = this.game$();
     const lives = Array(gameState.maxLives).fill(false);
@@ -155,7 +214,7 @@ export class ConnectionsGameComponent {
   });
 
   public readonly canPlay$ = computed(
-    () => ![GameStatus.OVER, GameStatus.WIN].includes(this.game$().gameStatus)
+    () => ![GameStatus.OVER, GameStatus.WIN].includes(this.game$()?.gameStatus)
   );
 
   public readonly isPlaying$ = computed(
@@ -164,9 +223,23 @@ export class ConnectionsGameComponent {
 
   public readonly selectedCard$ = this.gameService.selectedCard$;
 
+  public endOfGameDialogVisible: boolean = false;
+  public endOfGameDialogHeader: string = null;
+  private shownEndOfGameDialog: boolean = false;
+  public resultsCopiedToClipboard: boolean = false;
+
   public COLOR_CLASSES = CATEGORY_COLORS;
 
-  constructor(private gameService: ConnectionsGameService) {}
+  constructor(private gameService: ConnectionsGameService) {
+    // What to do on a game over
+    effect(() => {
+      if (!this.canPlay$() && !this.shownEndOfGameDialog) {
+        this.shownEndOfGameDialog = true;
+        const gameStatus = this.game$()?.gameStatus;
+        this.onGameOver(gameStatus);
+      }
+    });
+  }
 
   _trackByRowIdx(index: number) {
     return `row-${index}`;
@@ -196,9 +269,36 @@ export class ConnectionsGameComponent {
     this.gameService.updateGame();
   }
 
+  onGameOver(status: GameStatus) {
+    if (status == GameStatus.OVER) {
+      this.endOfGameDialogHeader = 'Game Over!';
+    } else if (status == GameStatus.WIN) {
+      this.endOfGameDialogHeader = 'Congratulations!';
+    }
+
+    setTimeout(() => {
+      this.endOfGameDialogVisible = true;
+    }, 500);
+  }
+
+  onShowResults() {
+    this.endOfGameDialogVisible = true;
+  }
+
+  onClickShare() {
+    this.gameService.shareScore();
+    this.resultsCopiedToClipboard = true;
+  }
+
+  onShowSolution() {
+    this.resultsCopiedToClipboard = false;
+    this.gameService.solveForGameOver();
+  }
+
   // Dev functions ------------------------------------------------------------
 
   _onClickReset() {
+    this.shownEndOfGameDialog = false;
     this.gameService._devReset();
   }
 

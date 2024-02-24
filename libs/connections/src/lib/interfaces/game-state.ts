@@ -26,3 +26,8 @@ export interface GameState {
   gameStatus: GameStatus;
   userHasPlayed: boolean;
 }
+
+export interface Score {
+  levels: number[][];
+  icons: string[];
+}

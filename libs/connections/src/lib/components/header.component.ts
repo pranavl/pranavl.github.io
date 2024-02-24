@@ -7,7 +7,7 @@ import { ConnectionsGameService } from '../services/game.service';
     <div class="tw-w-screen tw-flex tw-flex-col">
       <!-- Top row -->
       <div
-        class="tw-flex tw-flex-row tw-items-end tw-gap-4 tw-py-4 tw-px-20 tw-border-b tw-border-gray-400"
+        class="tw-flex tw-flex-row tw-items-end tw-gap-4 tw-py-4 tw-px-10 tw-border-b tw-border-gray-400"
       >
         <div class="tw-text-2xl tw-font-bold">Connections++</div>
         <div class="tw-text-base tw-font-light">
@@ -16,7 +16,7 @@ import { ConnectionsGameService } from '../services/game.service';
       </div>
       <!-- Second row -->
       <div
-        class="tw-flex tw-flex-row tw-items-center tw-gap-4 tw-justify-between tw-py-2 tw-px-20 tw-border-b tw-border-gray-400"
+        class="tw-flex tw-flex-row tw-items-center tw-gap-4 tw-justify-between tw-py-2 tw-px-10 tw-border-b tw-border-gray-400"
       >
         <div class="tw-text-base tw-font-light tw-text-gray-500">
           Puzzle by {{ puzzle$()?.editor }}
@@ -32,13 +32,14 @@ import { ConnectionsGameService } from '../services/game.service';
       <!-- Help dialog -->
       <p-dialog
         header="How to Play"
-        [(visible)]="visible"
-        [style]="{ width: '50vw' }"
+        [(visible)]="infoDialogVisible"
+        [style]="{ 'min-width': '40vw', 'max-width': '700px'}"
         [draggable]="false"
         [modal]="true"
         [dismissableMask]="true"
       >
         <div class="tw-flex tw-flex-col tw-gap-4">
+          <!-- Info -->
           <span class="tw-text-lg">
             Find groups of four items that share something in common.
           </span>
@@ -47,9 +48,12 @@ import { ConnectionsGameService } from '../services/game.service';
               Swap words by clicking on two cards, or by dragging one onto
               another.
             </li>
-            <li>Organize words groups in each row.</li>
             <li>
-              The bar under each row shows how many words in the row are in a
+              Organize words into groups in each row. Try and solve all groups
+              at the same time before <b>submitting</b>!
+            </li>
+            <li>
+              The bar under each row shows how many words in that row are in a
               category.
             </li>
             <li>Find all groups of words without making 4 mistakes.</li>
@@ -58,6 +62,15 @@ import { ConnectionsGameService } from '../services/game.service';
             Each puzzle has exactly one solution. Watch out for words that seem
             to belong to multiple categories!
           </span>
+
+          <!-- Disclaimer -->
+          <a
+            class="tw-mt-4 tw-p-4 tw-bg-purple-100 tw-rounded-md"
+            href="https://www.nytimes.com/games/connections"
+          >
+            This game is an extension of The New York Times' Connections.<br />
+            <b>Click here to play the original.</b>
+          </a>
         </div>
       </p-dialog>
     </div>
@@ -66,11 +79,11 @@ import { ConnectionsGameService } from '../services/game.service';
 })
 export class ConnectionsHeaderComponent {
   public readonly puzzle$ = this.gameService.puzzle$;
-  visible: boolean = false;
+  public infoDialogVisible: boolean = false;
 
   constructor(private gameService: ConnectionsGameService) {}
 
   showHelp() {
-    this.visible = true;
+    this.infoDialogVisible = true;
   }
 }
