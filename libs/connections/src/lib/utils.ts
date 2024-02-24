@@ -9,3 +9,7 @@ export function shuffleArray(array: any[]) {
   }
   return array;
 }
+
+export const copyToClipboard = (value: string) => {
+  Promise.resolve(navigator.clipboard.writeText(value));
+};

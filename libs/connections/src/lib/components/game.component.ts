@@ -1,4 +1,5 @@
 import { Component, ViewEncapsulation, computed } from '@angular/core';
+import { CATEGORY_COLORS } from '../config';
 import { GameStatus } from '../interfaces';
 import { ConnectionsGameService } from '../services/game.service';
 
@@ -6,9 +7,12 @@ import { ConnectionsGameService } from '../services/game.service';
   selector: 'connections-game',
   template: `
     <div *ngIf="game$() as game" class="tw-flex tw-flex-col tw-gap-8">
+      <div class="tw-text-center tw-font-light">
+        Create four groups of four!
+      </div>
       <!-- Board -->
       <div
-        class="tw-shrink tw-grid tw-grid-cols-4 tw-gap-2 tw-min-w-[50vw] tw-max-w-[90vw] tw-pt-10"
+        class="tw-shrink tw-grid tw-grid-cols-4 tw-gap-2 tw-min-w-[50vw] tw-max-w-[90vw]"
       >
         <ng-container
           *ngFor="
@@ -79,8 +83,15 @@ import { ConnectionsGameService } from '../services/game.service';
           class="tw-flex tw-flex-row tw-justify-start tw-items-center tw-gap-2"
         >
           <span>Tries:</span>
-          <ng-container *ngFor="let life of lives$()">
-            <i [ngClass]="['fas fa-star', !life ? 'tw-opacity-0' : '']"></i>
+          <ng-container
+            *ngFor="let life of lives$(); index as i; trackBy: _trackByLife"
+          >
+            <i
+              [ngClass]="[
+                'fas fa-star tw-transition-opacity tw-text-gray-600',
+                !life ? 'tw-opacity-0' : 'tw-opacity-1'
+              ]"
+            ></i>
           </ng-container>
         </div>
         <!-- Shuffle -->
@@ -153,17 +164,16 @@ export class ConnectionsGameComponent {
 
   public readonly selectedCard$ = this.gameService.selectedCard$;
 
-  public COLOR_CLASSES = [
-    'tw-bg-yellow-200',
-    'tw-bg-green-400',
-    'tw-bg-blue-200',
-    'tw-bg-purple-400',
-  ];
+  public COLOR_CLASSES = CATEGORY_COLORS;
 
   constructor(private gameService: ConnectionsGameService) {}
 
   _trackByRowIdx(index: number) {
     return `row-${index}`;
+  }
+
+  _trackByLife(index: number) {
+    return `star-${index}`;
   }
 
   clickCard(rowIdx: number, colIdx: number) {
@@ -189,10 +199,10 @@ export class ConnectionsGameComponent {
   // Dev functions ------------------------------------------------------------
 
   _onClickReset() {
-    this.gameService._reset();
+    this.gameService._devReset();
   }
 
   _onClickSolve() {
-    this.gameService._solve();
+    this.gameService._devSolve();
   }
 }
