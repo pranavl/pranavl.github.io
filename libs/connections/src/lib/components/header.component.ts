@@ -19,7 +19,7 @@ import { ConnectionsGameService } from '../services/game.service';
         class="tw-flex tw-flex-row tw-items-center tw-gap-4 tw-justify-between tw-py-2 tw-px-10 tw-border-b tw-border-gray-400"
       >
         <div class="tw-text-base tw-font-light tw-text-gray-500">
-          Puzzle by {{ puzzle$()?.editor }}
+          Puzzle by {{ puzzle$()?.editor ?? '...' }}
         </div>
         <button
           pButton

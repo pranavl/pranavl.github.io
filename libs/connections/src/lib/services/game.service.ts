@@ -58,12 +58,15 @@ export class ConnectionsGameService {
    * Format the URL for today's date
    */
   private _formatUrl() {
-    // private API_URL = 'https://www.nytimes.com/svc/connections/v2';
     const date = new Date();
     const day = date.getDate();
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
     const year = date.getFullYear();
+
     return `/nyt-connections/${year}-${month}-${day}.json`;
+
+    // const API_URL = 'https://www.nytimes.com/svc/connections/v2';
+    // return `${API_URL}/${year}-${month}-${day}.json`
   }
 
   /**

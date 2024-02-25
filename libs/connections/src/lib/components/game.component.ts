@@ -6,9 +6,21 @@ import { ConnectionsGameService } from '../services/game.service';
 @Component({
   selector: 'connections-game',
   template: `
-    <div *ngIf="game$() as game" class="tw-flex tw-flex-col tw-gap-8">
+    <!-- Loading -->
+    <ng-template #loading>
+      <div class="tw-py-[20vh] tw-font-semibold tw-text-gray-500 tw-text-3xl tw-animate-pulse">
+        Loading...
+      </div>
+    </ng-template>
+
+    <!-- Game -->
+    <div
+      *ngIf="game$() as game; else loading"
+      class="tw-flex tw-flex-col tw-gap-8"
+    >
       <div class="tw-text-center tw-font-light">
-        Create four groups of four!
+        Create four groups of four!<br />
+        Click or drag cards to organize words into groups
       </div>
       <!-- Board -->
       <div
@@ -124,30 +136,28 @@ import { ConnectionsGameService } from '../services/game.service';
       </div>
 
       <!-- Dev tools -->
-      <div
+      <!-- <div
         class="tw-flex tw-flex-row tw-items-center tw-justify-center tw-gap-4"
       >
-        <!-- Solve -->
         <button
           pButton
           class="p-button-rounded p-button-warning"
           label="Reset"
           (click)="_onClickReset()"
         ></button>
-        <!-- Solve -->
         <button
           pButton
           class="p-button-rounded p-button-success"
           label="Solve"
           (click)="_onClickSolve()"
         ></button>
-      </div>
+      </div> -->
 
       <!-- End of game dialog -->
       <p-dialog
         [header]="endOfGameDialogHeader"
         [(visible)]="endOfGameDialogVisible"
-        [style]="{ 'max-width': '450px', 'width': '80vw' }"
+        [style]="{ 'max-width': '450px', width: '80vw' }"
         [draggable]="false"
         [modal]="true"
         [dismissableMask]="true"
