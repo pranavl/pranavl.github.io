@@ -5,54 +5,33 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
 @Component({
   selector: 'mc-selectable-card',
   template: `
-    <div class="tw-flex-col">
-      <mc-card [card]="card" [showImage]="true"></mc-card>
-      <div
-        class="tw-mt-[-16px] tw-flex tw-flex-row tw-gap-2 tw-justify-center tw-text-sm"
-      >
-        <!-- Add/remove cards from game -->
-        <button
-          *ngIf="!viewModel$().isInGame; else removeCardFromGameButton"
-          pButton
-          class="p-button-rounded p-button-primary tw-text-sm"
-          icon="fa-solid fa-plus"
-          label="Add"
-          (click)="addCardToGame()"
-        ></button>
-        <ng-template #removeCardFromGameButton>
-          <button
-            pButton
-            class="p-button-rounded p-button-primary tw-text-sm"
-            icon="fa-solid fa-minus"
-            label="Remove"
-            (click)="removeCardFromGame()"
-          ></button>
-        </ng-template>
-        <!-- Add remove cards from "set aside" -->
-        <button
-          *ngIf="!viewModel$().isSetAside; else removeCardFromSetAsideButton"
-          pButton
-          class="p-button-rounded p-button-secondary tw-text-sm"
-          icon="fa-solid fa-forward"
-          label="Set aside"
-          (click)="addCardToSetAside()"
-        ></button>
-        <ng-template #removeCardFromSetAsideButton>
-          <button
-            pButton
-            class="p-button-rounded p-button-secondary tw-text-sm"
-            icon="fa-solid fa-reply"
-            label="Remove from set aside"
-            (click)="removeCardFromSetAside()"
-          ></button>
-        </ng-template>
-      </div>
+    <div *ngIf="viewModel$() as viewModel" class="tw-flex-col tw-rounded-lg">
+      <mc-card
+        [card]="card"
+        [showImage]="true"
+        [classes]="
+          viewModel.isInGame
+            ? CARD_IN_GAME_STYLE
+            : viewModel.isSetAside
+            ? CARD_SET_ASIDE_STYLE
+            : ''
+        "
+      ></mc-card>
+      <!-- Add remove buttons -->
+      <mc-add-remove-buttons
+        classes="tw-mt-[-16px]"
+        [cardState]="viewModel"
+        (addToGame)="addCardToGame()"
+        (removeFromGame)="removeCardFromGame()"
+        (addToSetAside)="addCardToSetAside()"
+        (removeFromSetAside)="removeCardFromSetAside()"
+      ></mc-add-remove-buttons>
     </div>
   `,
   styles: [
     `
       button .p-button-label {
-        @apply tw-text-sm;
+        @apply !tw-text-sm;
       }
     `,
   ],
@@ -68,6 +47,9 @@ export class SelectableCardComponent {
     isInGame: this._presenter.cardsInGame$().has(this.card.code),
     isSetAside: this._presenter.cardsSetAside$().has(this.card.code),
   }));
+
+  public CARD_IN_GAME_STYLE = 'tw-border-4 tw-border-orange-600';
+  public CARD_SET_ASIDE_STYLE = 'tw-border-4 tw-border-dashed tw-border-gray-600';
 
   addCardToGame() {
     this._presenter.addCardsToGame(this.card);

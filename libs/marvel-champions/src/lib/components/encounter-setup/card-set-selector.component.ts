@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, computed } from '@angular/core';
 import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presenter';
 
 @Component({
@@ -23,6 +23,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
             class="tw-flex tw-flex-row tw-w-full tw-justify-between tw-text-sm"
           >
             <span> {{ item.label }}</span>
+            <!-- Number of cards in the set that have been added/set aside -->
             <div *ngIf="item.numCardsInGame + item.numCardsSetAside > 0">
               <span
                 class="tw-px-2 tw-py-1 tw-rounded-l-full tw-bg-orange-100"
@@ -37,50 +38,21 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
       </p-listbox>
 
       <!-- Right content -->
-      <div class="tw-flex tw-flex-col tw-w-full">
+      <div class="tw-flex tw-flex-col tw-overflow-y-auto tw-w-full">
         <div *ngIf="selectedSetViewModel$() as vm; else noSetSelected">
           <!-- Header -->
           <div
             class="tw-flex tw-min-h-[3rem] tw-px-4 tw-bg-orange-200 tw-items-center tw-justify-between"
           >
             {{ vm.setInfo?.card_set_name }}
-
-            <div class="tw-flex tw-gap-2">
-              <!-- Add/remove cards from game -->
-              <button
-                *ngIf="vm.numCardsInGame === 0"
-                pButton
-                class="p-button-rounded p-button-primary tw-text-sm"
-                icon="fa-solid fa-plus"
-                label="Add"
-                (click)="addCardsInSetToGame()"
-              ></button>
-              <button
-                *ngIf="vm.numCardsInGame !== 0"
-                pButton
-                class="p-button-rounded p-button-primary tw-text-sm"
-                icon="fa-solid fa-minus"
-                label="Remove"
-                (click)="removeCardsInSetFromGame()"
-              ></button>
-              <!-- Add remove cards from "set aside" -->
-              <button
-                *ngIf="vm.numCardsSetAside === 0"
-                pButton
-                class="p-button-rounded p-button-secondary tw-text-sm"
-                icon="fa-solid fa-forward"
-                label="Set aside"
-                (click)="addCardsInSetToSetAside()"
-              ></button>
-              <button
-                *ngIf="vm.numCardsSetAside !== 0"
-                pButton
-                class="p-button-rounded p-button-secondary tw-text-sm"
-                icon="fa-solid fa-reply"
-                label="Remove from set aside"
-                (click)="removeCardsInSetFromSetAside()"
-              ></button>
-            </div>
+            <!-- Add remove buttons -->
+            <mc-add-remove-buttons
+              [cardState]="selectedSetButtonViewModel$()"
+              (addToGame)="addCardsInSetToGame()"
+              (removeFromGame)="removeCardsInSetFromGame()"
+              (addToSetAside)="addCardsInSetToSetAside()"
+              (removeFromSetAside)="removeCardsInSetFromSetAside()"
+            ></mc-add-remove-buttons>
           </div>
           <!-- Card list -->
           <div
@@ -125,6 +97,13 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
 export class CardsSelectorComponent {
   public setListViewModel$ = this._presenter.cardSetListViewModel$;
   public selectedSetViewModel$ = this._presenter.cardSetViewModel$;
+  public selectedSetButtonViewModel$ = computed(() => {
+    const vm = this._presenter.cardSetViewModel$();
+    return {
+      isInGame: vm.numCardsInGame > 0,
+      isSetAside: vm.numCardsSetAside > 0,
+    };
+  });
 
   constructor(private _presenter: EncounterSetupPresenter) {}
 

@@ -4,7 +4,12 @@ import { ICard } from '../../interfaces';
 @Component({
   selector: 'mc-card',
   template: `
-    <div class="tw-border tw-border-gray-500 tw-rounded-lg tw-flex tw-flex-col">
+    <div
+      [ngClass]="[
+        'tw-border tw-border-gray-500 tw-rounded-lg tw-flex tw-flex-col',
+        classes
+      ]"
+    >
       <!-- Title -->
       <div
         class="tw-p-2 tw-text-base tw-font-medium tw-font-semibold tw-bg-gray-200 tw-rounded-t-lg"
@@ -47,6 +52,7 @@ import { ICard } from '../../interfaces';
 export class CardComponent {
   @Input() card: ICard;
   @Input() showImage: boolean = true;
+  @Input() classes: string = '';
 
   public showText: boolean = false;
 

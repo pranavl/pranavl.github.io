@@ -7,11 +7,16 @@ import { ListboxModule } from 'primeng/listbox';
 import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presenter';
 import { CardsDatabaseHttpService, GameSetupService } from '../../services';
 import { CardComponentModule } from '../cards';
+import { CardSelectorAddRemoveButtonsComponent } from './add-remove-buttons.component';
 import { CardsSelectorComponent } from './card-set-selector.component';
 import { SelectableCardComponent } from './selectable-card.component';
 
 @NgModule({
-  providers: [EncounterSetupPresenter, GameSetupService, CardsDatabaseHttpService],
+  providers: [
+    EncounterSetupPresenter,
+    GameSetupService,
+    CardsDatabaseHttpService,
+  ],
   imports: [
     CommonModule,
     HttpClientModule,
@@ -20,7 +25,11 @@ import { SelectableCardComponent } from './selectable-card.component';
     ButtonModule,
     CardComponentModule,
   ],
-  declarations: [CardsSelectorComponent, SelectableCardComponent],
+  declarations: [
+    CardsSelectorComponent,
+    SelectableCardComponent,
+    CardSelectorAddRemoveButtonsComponent,
+  ],
   exports: [CardsSelectorComponent],
 })
 export class EncounterSetupComponentModule {}
