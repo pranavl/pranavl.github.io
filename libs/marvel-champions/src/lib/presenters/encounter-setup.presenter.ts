@@ -12,6 +12,7 @@ export interface CardsSelectorOptionGroup {
     cardsInSet: number;
     numCardsInGame: number;
     numCardsSetAside: number;
+    hasCardsInGame: boolean;
   }[];
 }
 
@@ -54,12 +55,16 @@ export class EncounterSetupPresenter {
         });
       }
 
+      const numCardsInGame = countCardsInMap(cardsInGame, cardSet.cards_in_set)
+      const numCardsSetAside = countCardsInMap(cardsSetAside, cardSet.cards_in_set)
+
       cardsByPack.get(cardSet.pack_code).items.push({
         label: cardSet.card_set_name,
         value: cardSet.card_set_code,
         cardsInSet: cardSet.cards_in_set.length,
-        numCardsInGame: countCardsInMap(cardsInGame, cardSet.cards_in_set),
-        numCardsSetAside: countCardsInMap(cardsSetAside, cardSet.cards_in_set),
+        numCardsInGame,
+        numCardsSetAside,
+        hasCardsInGame: numCardsInGame + numCardsSetAside > 0
       });
     });
     return Array.from(cardsByPack.values());

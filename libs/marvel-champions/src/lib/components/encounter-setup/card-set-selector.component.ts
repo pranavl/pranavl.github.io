@@ -4,38 +4,56 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
 @Component({
   selector: 'mc-card-set-selector',
   template: `
-    <div class="tw-flex tw-h-[100vh]">
-      <!-- List of sets -->
-      <p-listbox
-        class="tw-w-[25rem] tw-overflow-y-auto"
-        [options]="setListViewModel$()"
-        [group]="true"
-        (onChange)="onChangeSelectedSet($event)"
-        [filter]="true"
-      >
-        <ng-template let-group pTemplate="group">
-          <div class="tw-flex tw-text-sm">
-            <span>{{ group.label }}</span>
-          </div>
-        </ng-template>
-        <ng-template let-item pTemplate="item">
-          <div
-            class="tw-flex tw-flex-row tw-w-full tw-justify-between tw-text-sm"
-          >
-            <span> {{ item.label }}</span>
-            <!-- Number of cards in the set that have been added/set aside -->
-            <div *ngIf="item.numCardsInGame + item.numCardsSetAside > 0">
-              <span
-                class="tw-px-2 tw-py-1 tw-rounded-l-full tw-bg-orange-100"
-                >{{ item.numCardsInGame }}</span
-              >
-              <span class="tw-px-2 tw-py-1 tw-rounded-r-full tw-bg-gray-100">{{
-                item.numCardsSetAside
-              }}</span>
+    <div class="tw-flex tw-h-full">
+      <!-- Left content -->
+      <div class="tw-w-[25rem] tw-flex tw-flex-col">
+        <!-- Top of list -->
+        <div
+          class="tw-flex tw-justify-center tw-min-h-[3rem] tw-py-2 tw-bg-blue-100"
+        >
+          <button
+            pButton
+            class="p-button-rounded p-button-primary"
+            label="START"
+            (click)="onClickStartGame()"
+          ></button>
+        </div>
+        <!-- List of sets -->
+        <p-listbox
+          class="tw-overflow-y-auto"
+          [options]="setListViewModel$()"
+          [group]="true"
+          (onChange)="onChangeSelectedSet($event)"
+          [filter]="true"
+        >
+          <ng-template let-group pTemplate="group">
+            <div class="tw-flex tw-text-sm">
+              <span>{{ group.label }}</span>
             </div>
-          </div>
-        </ng-template>
-      </p-listbox>
+          </ng-template>
+          <ng-template let-item pTemplate="item">
+            <div
+              [ngClass]="[
+                'tw-flex tw-flex-row tw-w-full tw-justify-between tw-text-sm',
+                item.hasCardsInGame ? 'tw-font-semibold' : ''
+              ]"
+            >
+              <div> {{ item.label }}</div>
+              <!-- Number of cards in the set that have been added/set aside -->
+              <div *ngIf="item.hasCardsInGame">
+                <span
+                  class="tw-px-2 tw-py-1 tw-rounded-l-full tw-bg-orange-100"
+                  >{{ item.numCardsInGame }}</span
+                >
+                <span
+                  class="tw-px-2 tw-py-1 tw-rounded-r-full tw-bg-gray-100"
+                  >{{ item.numCardsSetAside }}</span
+                >
+              </div>
+            </div>
+          </ng-template>
+        </p-listbox>
+      </div>
 
       <!-- Right content -->
       <div class="tw-flex tw-flex-col tw-overflow-y-auto tw-w-full">
@@ -133,5 +151,9 @@ export class CardsSelectorComponent {
     this._presenter.removeCardsFromSetAside(
       ...this.selectedSetViewModel$().cardsInSelectedSet
     );
+  }
+
+  onClickStartGame() {
+    console.log('Clicked');
   }
 }
