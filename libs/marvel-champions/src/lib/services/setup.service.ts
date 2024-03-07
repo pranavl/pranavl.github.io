@@ -1,5 +1,6 @@
 import { Injectable, WritableSignal } from '@angular/core';
-import { ICard } from '../interfaces';
+import { v4 as uuid } from 'uuid';
+import { EGameAreaType, ICard, IGameArea } from '../interfaces';
 import { DataStore } from '../stores';
 
 @Injectable({
@@ -9,7 +10,7 @@ export class GameSetupService {
   constructor(private dataStore: DataStore) {}
 
   public cardsInGame$ = this.dataStore.cardsInGame$;
-  public cardsSetAside$ = this.dataStore.cardsSetAside$;
+  public gameState$ = this.dataStore.gameState$;
 
   private _addCards(
     target: WritableSignal<Map<string, ICard>>,
@@ -30,22 +31,40 @@ export class GameSetupService {
   }
 
   addCardsToGame(...cards: ICard[]) {
-    this.removeCardsFromSetAside(...cards);
     this._addCards(this.cardsInGame$, ...cards);
   }
   removeCardsFromGame(...cards: ICard[]) {
     this._removeCards(this.cardsInGame$, ...cards);
   }
-  addCardsToSetAside(...cards: ICard[]) {
-    this.removeCardsFromGame(...cards);
-    this._addCards(this.cardsSetAside$, ...cards);
-  }
-  removeCardsFromSetAside(...cards: ICard[]) {
-    this._removeCards(this.cardsSetAside$, ...cards);
-  }
 
   resetLoadedCards() {
     this.cardsInGame$.set(new Map());
-    this.cardsSetAside$.set(new Map());
+  }
+
+  addGameArea(label: string) {
+    this.gameState$.mutate((g) => {
+      const newArea: IGameArea = {
+        id: uuid(),
+        label,
+        type: EGameAreaType.ANY,
+        deck: [],
+        discard: [],
+        cardsInPlay: [],
+        isDefault: false,
+      };
+      g.gameAreas.set(newArea.id, newArea);
+    });
+  }
+
+  removeGameArea(id: string) {
+    this.gameState$.mutate((g) => {
+      g.gameAreas.delete(id);
+    });
+  }
+
+  renameGameArea(id: string, label: string) {
+    this.gameState$.mutate((g) => {
+      g.gameAreas.get(id).label = label;
+    });
   }
 }

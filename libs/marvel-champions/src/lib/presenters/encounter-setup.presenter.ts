@@ -1,6 +1,12 @@
-import { Injectable, WritableSignal, computed, signal } from '@angular/core';
+import {
+  Injectable,
+  WritableSignal,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { CARDS_BY_SET } from '../data/cards-by-set';
-import { ICard, ICardSetInfo } from '../interfaces';
+import { EGameAreaType, ICard, ICardSetInfo } from '../interfaces';
 import { GameSetupService } from '../services';
 
 export interface CardsSelectorOptionGroup {
@@ -11,7 +17,6 @@ export interface CardsSelectorOptionGroup {
     value: string;
     cardsInSet: number;
     numCardsInGame: number;
-    numCardsSetAside: number;
     hasCardsInGame: boolean;
   }[];
 }
@@ -20,7 +25,6 @@ export interface SetSelectorViewModel {
   setInfo: ICardSetInfo;
   cardsInSelectedSet: ICard[];
   numCardsInGame: number;
-  numCardsSetAside: number;
 }
 
 const countCardsInMap = (cardMap: Map<string, ICard>, cards: ICard[]) => {
@@ -34,16 +38,14 @@ const countCardsInMap = (cardMap: Map<string, ICard>, cards: ICard[]) => {
 
 @Injectable({ providedIn: 'root' })
 export class EncounterSetupPresenter {
-  constructor(private setupService: GameSetupService) {}
+  private setupService = inject(GameSetupService);
 
   private readonly selectedSetCode$: WritableSignal<string> = signal(null);
-  
+
   public readonly cardsInGame$ = this.setupService.cardsInGame$;
-  public readonly cardsSetAside$ = this.setupService.cardsSetAside$;
 
   readonly cardSetListViewModel$ = computed((): CardsSelectorOptionGroup[] => {
     const cardsInGame = this.setupService.cardsInGame$();
-    const cardsSetAside = this.setupService.cardsSetAside$();
 
     const cardsByPack = new Map<string, CardsSelectorOptionGroup>();
     CARDS_BY_SET.forEach((cardSet) => {
@@ -55,16 +57,14 @@ export class EncounterSetupPresenter {
         });
       }
 
-      const numCardsInGame = countCardsInMap(cardsInGame, cardSet.cards_in_set)
-      const numCardsSetAside = countCardsInMap(cardsSetAside, cardSet.cards_in_set)
+      const numCardsInGame = countCardsInMap(cardsInGame, cardSet.cards_in_set);
 
       cardsByPack.get(cardSet.pack_code).items.push({
         label: cardSet.card_set_name,
         value: cardSet.card_set_code,
         cardsInSet: cardSet.cards_in_set.length,
         numCardsInGame,
-        numCardsSetAside,
-        hasCardsInGame: numCardsInGame + numCardsSetAside > 0
+        hasCardsInGame: numCardsInGame > 0,
       });
     });
     return Array.from(cardsByPack.values());
@@ -79,7 +79,6 @@ export class EncounterSetupPresenter {
     }
 
     const cardsInGame = this.setupService.cardsInGame$();
-    const cardsSetAside = this.setupService.cardsSetAside$();
 
     return {
       setInfo: {
@@ -88,9 +87,40 @@ export class EncounterSetupPresenter {
       },
       cardsInSelectedSet: cardSet?.cards_in_set,
       numCardsInGame: countCardsInMap(cardsInGame, cardSet?.cards_in_set),
-      numCardsSetAside: countCardsInMap(cardsSetAside, cardSet?.cards_in_set),
     };
   });
+
+  public readonly gameState$ = this.setupService.gameState$;
+  readonly gameAreas$ = computed(() => {
+    return Array.from(this.gameState$().gameAreas.values());
+  });
+
+  public readonly cardToGameArea$ = signal<Map<string, string>>(new Map());
+
+  readonly cardConfiguratorViewModel$ = computed(() => {
+    // Configure game area options
+    const gameAreas = this.gameAreas$();
+    const gameAreaOptions = Array.from(gameAreas.values())
+      .map((ga) => ({
+        type: ga.type,
+        value: ga.id,
+        label: ga.label,
+        icon: ga.icon,
+      }))
+      .sort((a) => (a.type === EGameAreaType.ASIDE ? 1 : 0));
+
+    // Row data
+    const cards = Array.from(this.cardsInGame$().values());
+    const areaMap = this.cardToGameArea$();
+    cards.map((c) => ({
+      name: c.name,
+      setName: c.card_set_name,
+      type: c.faction_name,
+      gameArea: areaMap.get(c.code) ?? '',
+    }));
+  });
+
+  // Card selection -------------------------------------------------------------------
 
   updateSelectedSet(selectedSetCode: string) {
     this.selectedSetCode$.set(selectedSetCode);
@@ -104,11 +134,33 @@ export class EncounterSetupPresenter {
     this.setupService.removeCardsFromGame(...cards);
   }
 
-  addCardsToSetAside(...cards: ICard[]) {
-    this.setupService.addCardsToSetAside(...cards);
+  // Game configuration ---------------------------------------------------------------
+
+  private getDefaultGameArea(card: ICard) {
+    const gameAreas = this.gameAreas$();
+    // TODO pick up from here
+
   }
 
-  removeCardsFromSetAside(...cards: ICard[]) {
-    this.setupService.removeCardsFromSetAside(...cards);
+  addGameArea(label: string) {
+    this.setupService.addGameArea(label);
+  }
+
+  removeGameArea(id: string) {
+    this.setupService.removeGameArea(id);
+  }
+
+  renameGameArea(id: string, newName: string) {
+    this.setupService.renameGameArea(id, newName);
+  }
+
+  addCardToGameArea(cardId: string, gameAreaId: string) {
+    this.cardToGameArea$.mutate((m) => m.set(cardId, gameAreaId));
+  }
+
+  // Start game -----------------------------------------------------------------------
+
+  startGame() {
+    // TODO this
   }
 }

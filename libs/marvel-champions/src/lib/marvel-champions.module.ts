@@ -6,8 +6,12 @@ import { EncounterSetupPresenter } from './presenters/encounter-setup.presenter'
 import { CardsDatabaseHttpService, GameSetupService } from './services';
 
 @NgModule({
-  providers: [EncounterSetupPresenter, GameSetupService, CardsDatabaseHttpService],
-  imports: [CommonModule, HttpClientModule, EncounterSetupComponentModule],
+  providers: [
+    EncounterSetupPresenter,
+    GameSetupService,
+    CardsDatabaseHttpService,
+  ],
+  imports: [CommonModule, HttpClientModule],
   declarations: [],
   exports: [EncounterSetupComponentModule],
 })

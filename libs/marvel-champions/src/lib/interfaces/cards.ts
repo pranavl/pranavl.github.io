@@ -14,10 +14,10 @@ export interface ICard {
   imagesrc?: string;
   attack?: number;
   attack_cost?: number;
-  attack_text?;
-  back_flavor?;
-  back_name?;
-  back_text?;
+  attack_text?: string;
+  back_flavor?: string;
+  back_name?: string;
+  back_text?: string;
   backimagesrc?;
   base_threat?: number;
   base_threat_fixed?: boolean;
@@ -30,11 +30,11 @@ export interface ICard {
   escalation_threat_fixed?: boolean;
   faction_code?: string;
   faction_name?: string;
-  flavor?;
+  flavor?: string;
   health?: number;
   health_per_hero?;
   hidden?;
-  illustrator?;
+  illustrator?: string;
   is_unique?: boolean;
   linked_card?;
   linked_to_code?;

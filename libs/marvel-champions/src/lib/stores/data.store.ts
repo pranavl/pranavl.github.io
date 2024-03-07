@@ -1,5 +1,5 @@
 import { Injectable, WritableSignal, signal } from '@angular/core';
-import { ICard } from '../interfaces';
+import { ICard, IGameState, getDefaultGameState } from '../interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -9,8 +9,7 @@ export class DataStore {
     new Map()
   );
 
-  public readonly cardsSetAside$: WritableSignal<Map<string, ICard>> = signal(
-    new Map()
+  public readonly gameState$: WritableSignal<IGameState> = signal(
+    getDefaultGameState()
   );
-
 }

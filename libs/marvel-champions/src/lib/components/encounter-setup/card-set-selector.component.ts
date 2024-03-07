@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, computed } from '@angular/core';
+import { Component, ViewEncapsulation, computed, inject } from '@angular/core';
 import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presenter';
 
 @Component({
@@ -15,6 +15,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
             pButton
             class="p-button-rounded p-button-primary"
             label="START"
+            [disabled]="!hasCardsSelected$()"
             (click)="onClickStartGame()"
           ></button>
         </div>
@@ -38,17 +39,12 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
                 item.hasCardsInGame ? 'tw-font-semibold' : ''
               ]"
             >
-              <div> {{ item.label }}</div>
+              <div>{{ item.label }}</div>
               <!-- Number of cards in the set that have been added/set aside -->
               <div *ngIf="item.hasCardsInGame">
-                <span
-                  class="tw-px-2 tw-py-1 tw-rounded-l-full tw-bg-orange-100"
-                  >{{ item.numCardsInGame }}</span
-                >
-                <span
-                  class="tw-px-2 tw-py-1 tw-rounded-r-full tw-bg-gray-100"
-                  >{{ item.numCardsSetAside }}</span
-                >
+                <span class="tw-px-2 tw-py-1 tw-rounded-full tw-bg-orange-100">
+                  {{ item.numCardsInGame }}
+                </span>
               </div>
             </div>
           </ng-template>
@@ -68,8 +64,6 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
               [cardState]="selectedSetButtonViewModel$()"
               (addToGame)="addCardsInSetToGame()"
               (removeFromGame)="removeCardsInSetFromGame()"
-              (addToSetAside)="addCardsInSetToSetAside()"
-              (removeFromSetAside)="removeCardsInSetFromSetAside()"
             ></mc-add-remove-buttons>
           </div>
           <!-- Card list -->
@@ -96,6 +90,19 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
         </ng-template>
       </div>
     </div>
+
+    <!-- Game configuration dialog -->
+    <p-dialog
+      header="Set up game"
+      [(visible)]="gameConfiguratorDialogVisible"
+      [style]="{ 'min-width': '50vw', 'max-width': '90vw' }"
+      [draggable]="false"
+      [modal]="true"
+      [dismissableMask]="true"
+      (onHide)="debug()"
+    >
+      <mc-game-configurator></mc-game-configurator>
+    </p-dialog>
   `,
   encapsulation: ViewEncapsulation.None,
   styles: [
@@ -113,17 +120,26 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
   ],
 })
 export class CardsSelectorComponent {
+  private _presenter = inject(EncounterSetupPresenter);
+
   public setListViewModel$ = this._presenter.cardSetListViewModel$;
   public selectedSetViewModel$ = this._presenter.cardSetViewModel$;
+
+  public gameConfiguratorDialogVisible: boolean = false;
+
   public selectedSetButtonViewModel$ = computed(() => {
     const vm = this._presenter.cardSetViewModel$();
     return {
       isInGame: vm.numCardsInGame > 0,
-      isSetAside: vm.numCardsSetAside > 0,
     };
   });
 
-  constructor(private _presenter: EncounterSetupPresenter) {}
+  /**
+   * Have any cards been added to the game?
+   */
+  public hasCardsSelected$ = computed(
+    () => this._presenter.cardsInGame$()?.size > 0
+  );
 
   onChangeSelectedSet($event) {
     this._presenter.updateSelectedSet($event?.value);
@@ -141,19 +157,12 @@ export class CardsSelectorComponent {
     );
   }
 
-  addCardsInSetToSetAside() {
-    this._presenter.addCardsToSetAside(
-      ...this.selectedSetViewModel$().cardsInSelectedSet
-    );
-  }
-
-  removeCardsInSetFromSetAside() {
-    this._presenter.removeCardsFromSetAside(
-      ...this.selectedSetViewModel$().cardsInSelectedSet
-    );
-  }
-
   onClickStartGame() {
-    console.log('Clicked');
+    console.log(this._presenter.cardsInGame$());
+    this.gameConfiguratorDialogVisible = true;
+  }
+
+  debug() {
+    console.log(this._presenter.gameState$());
   }
 }

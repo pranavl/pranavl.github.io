@@ -1,4 +1,4 @@
-import { Component, Input, ViewEncapsulation, computed } from '@angular/core';
+import { Component, Input, ViewEncapsulation, computed, inject } from '@angular/core';
 import { ICard } from '../../interfaces';
 import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presenter';
 
@@ -9,13 +9,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
       <mc-card
         [card]="card"
         [showImage]="true"
-        [classes]="
-          viewModel.isInGame
-            ? CARD_IN_GAME_STYLE
-            : viewModel.isSetAside
-            ? CARD_SET_ASIDE_STYLE
-            : ''
-        "
+        [classes]="viewModel.isInGame ? CARD_IN_GAME_STYLE : ''"
       ></mc-card>
       <!-- Add remove buttons -->
       <mc-add-remove-buttons
@@ -23,8 +17,6 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
         [cardState]="viewModel"
         (addToGame)="addCardToGame()"
         (removeFromGame)="removeCardFromGame()"
-        (addToSetAside)="addCardToSetAside()"
-        (removeFromSetAside)="removeCardFromSetAside()"
       ></mc-add-remove-buttons>
     </div>
   `,
@@ -38,18 +30,16 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
   encapsulation: ViewEncapsulation.None,
 })
 export class SelectableCardComponent {
+  private _presenter = inject(EncounterSetupPresenter);
+
   @Input() card: ICard;
   @Input() showImage: boolean = true;
 
-  constructor(private _presenter: EncounterSetupPresenter) {}
-
   public viewModel$ = computed(() => ({
     isInGame: this._presenter.cardsInGame$().has(this.card.code),
-    isSetAside: this._presenter.cardsSetAside$().has(this.card.code),
   }));
 
   public CARD_IN_GAME_STYLE = 'tw-border-4 tw-border-orange-600';
-  public CARD_SET_ASIDE_STYLE = 'tw-border-4 tw-border-dashed tw-border-gray-600';
 
   addCardToGame() {
     this._presenter.addCardsToGame(this.card);
@@ -57,13 +47,5 @@ export class SelectableCardComponent {
 
   removeCardFromGame() {
     this._presenter.removeCardsFromGame(this.card);
-  }
-
-  addCardToSetAside() {
-    this._presenter.addCardsToSetAside(this.card);
-  }
-
-  removeCardFromSetAside() {
-    this._presenter.removeCardsFromSetAside(this.card);
   }
 }
