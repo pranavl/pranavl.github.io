@@ -8,6 +8,11 @@ const _defaultGameAreas = [
     icon: 'fas fa-skull-crossbones',
   },
   {
+    type: EGameAreaType.MAIN_SCHEME,
+    label: 'Main Scheme',
+    icon: 'far fa-rectangle-list',
+  },
+  {
     type: EGameAreaType.ENCOUNTER,
     label: 'Encounter',
     icon: 'fas fa-triangle-exclamation',

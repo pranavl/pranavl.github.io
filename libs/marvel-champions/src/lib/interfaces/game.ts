@@ -16,6 +16,7 @@ export interface IGameCard {
 export enum EGameAreaType {
   ANY = 'ANY',
   VILLAIN = 'VILLAIN',
+  MAIN_SCHEME = 'MAIN_SCHEME',
   ENCOUNTER = 'ENCOUNTER',
   ASIDE = 'ASIDE',
 }

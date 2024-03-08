@@ -20,13 +20,6 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
       ></mc-add-remove-buttons>
     </div>
   `,
-  styles: [
-    `
-      button .p-button-label {
-        @apply !tw-text-sm;
-      }
-    `,
-  ],
   encapsulation: ViewEncapsulation.None,
 })
 export class SelectableCardComponent {

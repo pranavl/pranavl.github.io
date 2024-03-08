@@ -18,10 +18,9 @@ import {
         pButton
         class="p-button-rounded p-button-primary"
         icon="fa-solid fa-plus"
+        label="Add"
         (click)="onClickAddToGame()"
-      >
-        <span class="tw-ml-2 tw-text-xs">Add</span>
-      </button>
+      ></button>
 
       <!-- Remove button -->
       <ng-template #removeButton>
@@ -29,10 +28,9 @@ import {
           pButton
           class="p-button-rounded p-button-danger"
           icon="fa-solid fa-minus"
+          label="Remove"
           (click)="onClickRemove()"
-        >
-          <span class="tw-ml-2 tw-text-xs">Remove</span>
-        </button>
+        ></button>
       </ng-template>
     </div>
   `,

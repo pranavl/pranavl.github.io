@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { CARDS_BY_SET } from '../data/cards-by-set';
-import { EGameAreaType, ICard, ICardSetInfo } from '../interfaces';
+import { ECardType, EGameAreaType, ICard, ICardSetInfo } from '../interfaces';
 import { GameSetupService } from '../services';
 
 export interface CardsSelectorOptionGroup {
@@ -91,7 +91,8 @@ export class EncounterSetupPresenter {
   });
 
   public readonly gameState$ = this.setupService.gameState$;
-  readonly gameAreas$ = computed(() => {
+  readonly gameAreas$ = computed(() => this.gameState$().gameAreas);
+  readonly gameAreasList$ = computed(() => {
     return Array.from(this.gameState$().gameAreas.values());
   });
 
@@ -100,7 +101,7 @@ export class EncounterSetupPresenter {
   readonly cardConfiguratorViewModel$ = computed(() => {
     // Configure game area options
     const gameAreas = this.gameAreas$();
-    const gameAreaOptions = Array.from(gameAreas.values())
+    const gameAreaOptions = this.gameAreasList$()
       .map((ga) => ({
         type: ga.type,
         value: ga.id,
@@ -112,12 +113,23 @@ export class EncounterSetupPresenter {
     // Row data
     const cards = Array.from(this.cardsInGame$().values());
     const areaMap = this.cardToGameArea$();
-    cards.map((c) => ({
-      name: c.name,
-      setName: c.card_set_name,
-      type: c.faction_name,
-      gameArea: areaMap.get(c.code) ?? '',
-    }));
+    const cardsInGame = cards.map((c) => {
+      const gameAreaId = areaMap.get(c.code) ?? this.getDefaultGameArea(c);
+      const gameAreaLabel = gameAreas.get(gameAreaId).label;
+      return {
+        id: c.code,
+        name: c.name,
+        setName: c.card_set_name,
+        type: c.type_code,
+        gameAreaId,
+        gameAreaLabel,
+      };
+    });
+
+    return {
+      gameAreaOptions,
+      cardsInGame,
+    };
   });
 
   // Card selection -------------------------------------------------------------------
@@ -137,9 +149,24 @@ export class EncounterSetupPresenter {
   // Game configuration ---------------------------------------------------------------
 
   private getDefaultGameArea(card: ICard) {
-    const gameAreas = this.gameAreas$();
-    // TODO pick up from here
+    const gameAreas = this.gameAreasList$();
+    const getGameAreaIdByType = (type: EGameAreaType) =>
+      gameAreas.find((ga) => ga.type == type)?.id;
 
+    // Villain
+    if (card.type_code == ECardType.VILLAIN) {
+      return getGameAreaIdByType(EGameAreaType.VILLAIN);
+    }
+    // Main scheme
+    if (card.type_code == ECardType.MAIN_SCHEME) {
+      return getGameAreaIdByType(EGameAreaType.MAIN_SCHEME);
+    }
+    // Nemesis sets
+    if (card.card_set_code.includes('nemesis')) {
+      return getGameAreaIdByType(EGameAreaType.ASIDE);
+    }
+    // Default: encounter deck
+    return getGameAreaIdByType(EGameAreaType.ENCOUNTER);
   }
 
   addGameArea(label: string) {

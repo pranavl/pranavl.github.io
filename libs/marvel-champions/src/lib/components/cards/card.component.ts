@@ -17,7 +17,7 @@ import { ICard } from '../../interfaces';
         {{ card.name }}
       </div>
       <!-- Card type -->
-      <div class="tw-py-1 tw-px-2 tw-text-xs tw-bg-gray-100 tw-italic">
+      <div class="tw-py-1 tw-px-2 tw-text-sm tw-bg-gray-100 tw-italic">
         {{ card.type_name }}
       </div>
       <!-- Contents -->
@@ -32,7 +32,7 @@ import { ICard } from '../../interfaces';
         </div>
 
         <ng-template #cardTextTemplate>
-          <div class="tw-text-xs" [innerHTML]="card.text"></div>
+          <div class="tw-text-sm" [innerHTML]="card.text"></div>
         </ng-template>
       </div>
     </div>

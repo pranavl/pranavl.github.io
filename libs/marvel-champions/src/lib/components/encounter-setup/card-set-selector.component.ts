@@ -9,7 +9,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
       <div class="tw-w-[25rem] tw-flex tw-flex-col">
         <!-- Top of list -->
         <div
-          class="tw-flex tw-justify-center tw-min-h-[3rem] tw-py-2 tw-bg-blue-100"
+          class="tw-flex tw-justify-center tw-min-h-[3rem] tw-py-1 tw-bg-blue-100"
         >
           <button
             pButton
@@ -28,14 +28,14 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
           [filter]="true"
         >
           <ng-template let-group pTemplate="group">
-            <div class="tw-flex tw-text-sm">
+            <div class="tw-flex">
               <span>{{ group.label }}</span>
             </div>
           </ng-template>
           <ng-template let-item pTemplate="item">
             <div
               [ngClass]="[
-                'tw-flex tw-flex-row tw-w-full tw-justify-between tw-text-sm',
+                'tw-flex tw-flex-row tw-w-full tw-justify-between',
                 item.hasCardsInGame ? 'tw-font-semibold' : ''
               ]"
             >
@@ -84,7 +84,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
 
         <!-- If no set has been selected yet -->
         <ng-template #noSetSelected>
-          <div class="tw-flex tw-items-center tw-justify-center tw-h-full">
+          <div class="tw-flex tw-items-center tw-justify-center tw-h-full tw-text-xl">
             Select a set
           </div>
         </ng-template>

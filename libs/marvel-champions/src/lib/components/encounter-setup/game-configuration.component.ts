@@ -10,7 +10,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
         <!-- Select number of players -->
         <div class="tw-flex tw-flex-col tw-gap-2">
           <span
-            class="tw-text-gray-500 tw-text-xs tw-font-semibold tw-uppercase"
+            class="tw-text-gray-500 tw-font-semibold tw-uppercase"
           >
             Players
           </span>
