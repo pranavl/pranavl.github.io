@@ -4,14 +4,14 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
 @Component({
   selector: 'mc-game-configurator',
   template: `
-    <div class="tw-flex tw-flex-row">
+    <div class="tw-flex tw-flex-row tw-gap-4">
       <!-- Left content -->
-      <div class="tw-flex tw-flex-col tw-gap-8 tw-p-4 tw-rounded-lg tw-bg-gray-100">
+      <div
+        class="tw-flex tw-flex-col tw-gap-8 tw-p-4 tw-rounded-lg tw-bg-gray-100"
+      >
         <!-- Select number of players -->
         <div class="tw-flex tw-flex-col tw-gap-2">
-          <span
-            class="tw-text-gray-500 tw-font-semibold tw-uppercase"
-          >
+          <span class="tw-text-gray-500 tw-font-semibold tw-uppercase">
             Players
           </span>
           <p-selectButton
@@ -24,9 +24,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
       </div>
 
       <!-- Right content -->
-      <div class="tw-p-4">
-        <mc-card-organizer> </mc-card-organizer>
-      </div>
+      <mc-card-organizer> </mc-card-organizer>
     </div>
   `,
   encapsulation: ViewEncapsulation.None,

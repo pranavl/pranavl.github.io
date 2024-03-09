@@ -84,7 +84,9 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
 
         <!-- If no set has been selected yet -->
         <ng-template #noSetSelected>
-          <div class="tw-flex tw-items-center tw-justify-center tw-h-full tw-text-xl">
+          <div
+            class="tw-flex tw-items-center tw-justify-center tw-h-full tw-text-xl"
+          >
             Select a set
           </div>
         </ng-template>

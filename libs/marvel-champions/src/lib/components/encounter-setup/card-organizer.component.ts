@@ -12,6 +12,8 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
       [tableStyle]="{ 'min-width': '60rem' }"
       styleClass="p-datatable-sm"
       [globalFilterFields]="['setName', 'name', 'type', 'gameAreaLabel']"
+      [scrollable]="true"
+      scrollHeight="500px"
     >
       <ng-template pTemplate="caption">
         <div class="tw-flex tw-justify-between">
@@ -64,9 +66,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
             >
               <ng-template let-item pTemplate>
                 <i *ngIf="item.icon" [class]="item.icon"></i>
-                <span *ngIf="!item.icon">{{
-                  item.label
-                }}</span>
+                <span *ngIf="!item.icon">{{ item.label }}</span>
               </ng-template></p-selectButton
             >
           </td>
@@ -88,7 +88,7 @@ export class EncounterCardOrganizerComponent {
 
   onRowGameAreaChanged(cardId: string, gameAreaId: string) {
     console.log(cardId, gameAreaId);
-    // this._presenter.addCardToGameArea(cardId, gameAreaId);
+    this._presenter.addCardToGameArea(cardId, gameAreaId);
   }
 
   clear(table: Table) {

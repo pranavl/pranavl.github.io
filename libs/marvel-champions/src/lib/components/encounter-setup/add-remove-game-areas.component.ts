@@ -4,7 +4,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
 @Component({
   selector: 'mc-add-remove-game-areas',
   template: `
-    <div class="tw-flex tw-flex-col tw-gap-2 tw-overflow-y-auto">
+    <div class="tw-flex tw-flex-col tw-gap-4 tw-overflow-y-auto tw-p-1">
       <span class="tw-text-gray-500 tw-font-semibold tw-uppercase">
         Configure game areas
       </span>
@@ -40,14 +40,16 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
         </ng-template>
       </div>
       <!-- Add button -->
-      <button
-        pButton
-        class="p-button-rounded p-button-outlined tw-w-[170px]"
-        icon="fa-solid fa-plus"
-        (click)="addGameArea()"
-      >
-        <span class="tw-ml-2 tw-text-sm">Add game area</span>
-      </button>
+      <div class="tw-px-4">
+        <button
+          pButton
+          class="p-button-rounded p-button-outlined"
+          icon="fa-solid fa-plus"
+          label="Add game area"
+          (click)="addGameArea()"
+        >
+        </button>
+      </div>
     </div>
   `,
   encapsulation: ViewEncapsulation.None,

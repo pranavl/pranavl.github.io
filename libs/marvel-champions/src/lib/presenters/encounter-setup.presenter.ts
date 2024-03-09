@@ -91,7 +91,7 @@ export class EncounterSetupPresenter {
   });
 
   public readonly gameState$ = this.setupService.gameState$;
-  readonly gameAreas$ = computed(() => this.gameState$().gameAreas);
+  readonly gameAreasMap$ = computed(() => this.gameState$().gameAreas);
   readonly gameAreasList$ = computed(() => {
     return Array.from(this.gameState$().gameAreas.values());
   });
@@ -100,7 +100,7 @@ export class EncounterSetupPresenter {
 
   readonly cardConfiguratorViewModel$ = computed(() => {
     // Configure game area options
-    const gameAreas = this.gameAreas$();
+    const gameAreas = this.gameAreasMap$();
     const gameAreaOptions = this.gameAreasList$()
       .map((ga) => ({
         type: ga.type,
@@ -175,6 +175,10 @@ export class EncounterSetupPresenter {
 
   removeGameArea(id: string) {
     this.setupService.removeGameArea(id);
+    // Remove any mappings to that game area
+    this.cardToGameArea$.set(
+      new Map([...this.cardToGameArea$()].filter((kv) => kv[1] !== id))
+    );
   }
 
   renameGameArea(id: string, newName: string) {
