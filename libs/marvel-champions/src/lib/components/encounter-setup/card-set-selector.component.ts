@@ -14,6 +14,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
           [group]="true"
           (onChange)="onChangeSelectedSet($event)"
           [filter]="true"
+          
         >
           <ng-template let-group pTemplate="group">
             <div class="tw-flex">

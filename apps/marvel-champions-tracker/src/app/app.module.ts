@@ -5,6 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { MarvelChampionsModule } from 'marvel-champions';
 import { AppComponent } from './app.component';
+import { AppRoutesModule } from './app.routes';
 
 @NgModule({
   declarations: [AppComponent],
@@ -14,6 +15,7 @@ import { AppComponent } from './app.component';
     HttpClientModule,
     MarvelChampionsModule,
     RouterModule,
+    AppRoutesModule,
   ],
   bootstrap: [AppComponent],
 })
