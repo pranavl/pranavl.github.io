@@ -4,7 +4,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
 @Component({
   selector: 'mc-add-remove-game-areas',
   template: `
-    <div class="tw-flex tw-flex-col tw-gap-4 tw-overflow-y-auto tw-p-1">
+    <div class="tw-flex tw-flex-col tw-gap-2 tw-overflow-y-auto tw-p-1">
       <span class="tw-text-gray-500 tw-font-semibold tw-uppercase">
         Configure game areas
       </span>

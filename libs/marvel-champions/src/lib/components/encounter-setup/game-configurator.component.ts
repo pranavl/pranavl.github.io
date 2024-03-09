@@ -9,7 +9,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
       <div
         class="tw-flex tw-flex-col tw-gap-8 tw-p-4 tw-rounded-lg tw-bg-gray-100 tw-justify-between"
       >
-        <div>
+        <div class="tw-flex tw-flex-col tw-gap-4">
           <!-- Select number of players -->
           <div class="tw-flex tw-flex-col tw-gap-2">
             <span class="tw-text-gray-500 tw-font-semibold tw-uppercase">
@@ -24,7 +24,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
           <mc-add-remove-game-areas></mc-add-remove-game-areas>
         </div>
         <!-- Start game -->
-        <div class="tw-flex tw-justify-center tw-px-4 tw-pt-4 tw-border-t tw-border-gray-500">
+        <div class="tw-flex tw-justify-center tw-px-4 tw-pt-4 tw-border-t tw-border-gray-300">
           <button
             pButton
             class="p-button-rounded p-button-primary"

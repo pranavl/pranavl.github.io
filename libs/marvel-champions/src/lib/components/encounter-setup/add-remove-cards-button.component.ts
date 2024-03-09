@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'mc-add-remove-buttons',
+  selector: 'mc-add-remove-cards-button',
   template: `
     <div
       [ngClass]="['tw-flex tw-flex-row tw-gap-2 tw-justify-center', classes]"
@@ -18,7 +18,7 @@ import {
         pButton
         class="p-button-rounded p-button-primary"
         icon="fa-solid fa-plus"
-        label="Add"
+        [label]="showLabel ? 'Add' : ''"
         (click)="onClickAddToGame()"
       ></button>
 
@@ -28,7 +28,7 @@ import {
           pButton
           class="p-button-rounded p-button-danger"
           icon="fa-solid fa-minus"
-          label="Remove"
+          [label]="showLabel ? 'Remove' : ''"
           (click)="onClickRemove()"
         ></button>
       </ng-template>
@@ -41,6 +41,7 @@ export class CardSelectorAddRemoveButtonsComponent {
     isInGame: false,
   };
   @Input() classes = '';
+  @Input() showLabel: boolean = true;
 
   @Output() addToGame = new EventEmitter<void>();
   @Output() removeFromGame = new EventEmitter<void>();

@@ -14,7 +14,6 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
           [group]="true"
           (onChange)="onChangeSelectedSet($event)"
           [filter]="true"
-          
         >
           <ng-template let-group pTemplate="group">
             <div class="tw-flex">
@@ -24,16 +23,31 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
           <ng-template let-item pTemplate="item">
             <div
               [ngClass]="[
-                'tw-flex tw-flex-row tw-w-full tw-justify-between',
+                'tw-h-[33px] tw-flex tw-flex-row tw-w-full tw-justify-between tw-items-center',
                 item.hasCardsInGame ? 'tw-font-semibold' : ''
               ]"
             >
               <div>{{ item.label }}</div>
-              <!-- Number of cards in the set that have been added/set aside -->
-              <div *ngIf="item.hasCardsInGame">
-                <span class="tw-px-2 tw-py-1 tw-rounded-full tw-bg-orange-100">
-                  {{ item.numCardsInGame }}
-                </span>
+              <div class="tw-flex tw-flex-row tw-gap-2 tw-items-center">
+                <!-- Number of cards in the set that have been added/set aside -->
+                <div *ngIf="item.hasCardsInGame">
+                  <span
+                    class="tw-px-2 tw-py-1 tw-rounded-full tw-bg-orange-100"
+                  >
+                    {{ item.numCardsInGame }}
+                  </span>
+                </div>
+                <!-- Add remove buttons -->
+                <mc-add-remove-cards-button
+                  *ngIf="
+                    selectedSetViewModel$()?.setInfo.card_set_code ===
+                    item.value
+                  "
+                  [showLabel]="false"
+                  [cardState]="{ isInGame: item.hasCardsInGame }"
+                  (addToGame)="addCardsInSetToGame()"
+                  (removeFromGame)="removeCardsInSetFromGame()"
+                ></mc-add-remove-cards-button>
               </div>
             </div>
           </ng-template>
@@ -61,11 +75,11 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
           >
             {{ vm.setInfo?.card_set_name }}
             <!-- Add remove buttons -->
-            <mc-add-remove-buttons
+            <mc-add-remove-cards-button
               [cardState]="selectedSetButtonViewModel$()"
               (addToGame)="addCardsInSetToGame()"
               (removeFromGame)="removeCardsInSetFromGame()"
-            ></mc-add-remove-buttons>
+            ></mc-add-remove-cards-button>
           </div>
           <!-- Card list -->
           <div
@@ -102,7 +116,6 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
       [draggable]="false"
       [modal]="true"
       [dismissableMask]="true"
-      (onHide)="debug()"
     >
       <mc-game-configurator></mc-game-configurator>
     </p-dialog>
@@ -163,9 +176,5 @@ export class CardsSelectorComponent {
   onClickStartGame() {
     console.log(this._presenter.cardsInGame$());
     this.gameConfiguratorDialogVisible = true;
-  }
-
-  debug() {
-    console.log(this._presenter.gameState$());
   }
 }

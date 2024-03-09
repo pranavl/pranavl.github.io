@@ -12,12 +12,12 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
         [classes]="viewModel.isInGame ? CARD_IN_GAME_STYLE : ''"
       ></mc-card>
       <!-- Add remove buttons -->
-      <mc-add-remove-buttons
+      <mc-add-remove-cards-button
         classes="tw-mt-[-16px]"
         [cardState]="viewModel"
         (addToGame)="addCardToGame()"
         (removeFromGame)="removeCardFromGame()"
-      ></mc-add-remove-buttons>
+      ></mc-add-remove-cards-button>
     </div>
   `,
   encapsulation: ViewEncapsulation.None,

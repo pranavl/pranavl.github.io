@@ -13,11 +13,11 @@ import { TooltipModule } from 'primeng/tooltip';
 import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presenter';
 import { CardsDatabaseHttpService, GameSetupService } from '../../services';
 import { CardComponentModule } from '../cards';
-import { CardSelectorAddRemoveButtonsComponent } from './add-remove-buttons.component';
+import { CardSelectorAddRemoveButtonsComponent } from './add-remove-cards-button.component';
 import { AddRemoveGameAreasComponent } from './add-remove-game-areas.component';
 import { EncounterCardOrganizerComponent } from './card-organizer.component';
 import { CardsSelectorComponent } from './card-set-selector.component';
-import { GameConfiguratorComponent } from './game-configuration.component';
+import { GameConfiguratorComponent } from './game-configurator.component';
 import { SelectableCardComponent } from './selectable-card.component';
 
 @NgModule({
