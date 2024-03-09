@@ -94,7 +94,4 @@ export class EncounterCardOrganizerComponent {
   clear(table: Table) {
     table.clear();
   }
-  onClickStartGame() {
-    this._presenter.startGame();
-  }
 }

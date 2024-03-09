@@ -6,7 +6,13 @@ import {
   signal,
 } from '@angular/core';
 import { CARDS_BY_SET } from '../data/cards-by-set';
-import { ECardType, EGameAreaType, ICard, ICardSetInfo } from '../interfaces';
+import {
+  ECardType,
+  EGameAreaType,
+  ICard,
+  ICardSetInfo,
+  IGameConfigurationViewModel,
+} from '../interfaces';
 import { GameSetupService } from '../services';
 
 export interface CardsSelectorOptionGroup {
@@ -98,39 +104,41 @@ export class EncounterSetupPresenter {
 
   public readonly cardToGameArea$ = signal<Map<string, string>>(new Map());
 
-  readonly cardConfiguratorViewModel$ = computed(() => {
-    // Configure game area options
-    const gameAreas = this.gameAreasMap$();
-    const gameAreaOptions = this.gameAreasList$()
-      .map((ga) => ({
-        type: ga.type,
-        value: ga.id,
-        label: ga.label,
-        icon: ga.icon,
-      }))
-      .sort((a) => (a.type === EGameAreaType.ASIDE ? 1 : 0));
+  readonly cardConfiguratorViewModel$ = computed(
+    (): IGameConfigurationViewModel => {
+      // Configure game area options
+      const gameAreas = this.gameAreasMap$();
+      const gameAreaOptions = this.gameAreasList$()
+        .map((ga) => ({
+          type: ga.type,
+          value: ga.id,
+          label: ga.label,
+          icon: ga.icon,
+        }))
+        .sort((a) => (a.type === EGameAreaType.ASIDE ? 1 : 0));
 
-    // Row data
-    const cards = Array.from(this.cardsInGame$().values());
-    const areaMap = this.cardToGameArea$();
-    const cardsInGame = cards.map((c) => {
-      const gameAreaId = areaMap.get(c.code) ?? this.getDefaultGameArea(c);
-      const gameAreaLabel = gameAreas.get(gameAreaId).label;
+      // Row data
+      const cards = Array.from(this.cardsInGame$().values());
+      const areaMap = this.cardToGameArea$();
+      const cardsInGame = cards.map((c) => {
+        const gameAreaId = areaMap.get(c.code) ?? this.getDefaultGameArea(c);
+        const gameAreaLabel = gameAreas.get(gameAreaId).label;
+        return {
+          id: c.code,
+          name: c.name,
+          setName: c.card_set_name,
+          type: c.type_code,
+          gameAreaId,
+          gameAreaLabel,
+        };
+      });
+
       return {
-        id: c.code,
-        name: c.name,
-        setName: c.card_set_name,
-        type: c.type_code,
-        gameAreaId,
-        gameAreaLabel,
+        gameAreaOptions,
+        cardsInGame,
       };
-    });
-
-    return {
-      gameAreaOptions,
-      cardsInGame,
-    };
-  });
+    }
+  );
 
   // Card selection -------------------------------------------------------------------
 
@@ -191,7 +199,7 @@ export class EncounterSetupPresenter {
 
   // Start game -----------------------------------------------------------------------
 
-  startGame() {
+  startGame(numPlayers: number) {
     // TODO this
   }
 }

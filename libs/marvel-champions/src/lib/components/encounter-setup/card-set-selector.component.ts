@@ -7,18 +7,6 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
     <div class="tw-flex tw-h-full">
       <!-- Left content -->
       <div class="tw-w-[25rem] tw-flex tw-flex-col">
-        <!-- Top of list -->
-        <div
-          class="tw-flex tw-justify-center tw-min-h-[3rem] tw-py-1 tw-bg-blue-100"
-        >
-          <button
-            pButton
-            class="p-button-rounded p-button-primary"
-            label="START"
-            [disabled]="!hasCardsSelected$()"
-            (click)="onClickStartGame()"
-          ></button>
-        </div>
         <!-- List of sets -->
         <p-listbox
           class="tw-overflow-y-auto"
@@ -49,6 +37,18 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
             </div>
           </ng-template>
         </p-listbox>
+        <!-- Configure game -->
+        <div
+          class="tw-flex tw-justify-center tw-min-h-[4rem] tw-py-2 tw-bg-gray-100"
+        >
+          <button
+            pButton
+            class="p-button-rounded p-button-primary"
+            label="CONFIGURE GAME"
+            [disabled]="!hasCardsSelected$()"
+            (click)="onClickStartGame()"
+          ></button>
+        </div>
       </div>
 
       <!-- Right content -->
@@ -56,7 +56,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
         <div *ngIf="selectedSetViewModel$() as vm; else noSetSelected">
           <!-- Header -->
           <div
-            class="tw-flex tw-min-h-[3rem] tw-px-4 tw-bg-orange-200 tw-items-center tw-justify-between"
+            class="tw-sticky tw-top-0 tw-z-[1000] tw-flex tw-min-h-[4rem] tw-px-4 tw-bg-orange-200 tw-items-center tw-justify-between"
           >
             {{ vm.setInfo?.card_set_name }}
             <!-- Add remove buttons -->

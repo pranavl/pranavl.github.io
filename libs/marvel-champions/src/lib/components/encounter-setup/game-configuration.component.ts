@@ -7,20 +7,31 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
     <div class="tw-flex tw-flex-row tw-gap-4">
       <!-- Left content -->
       <div
-        class="tw-flex tw-flex-col tw-gap-8 tw-p-4 tw-rounded-lg tw-bg-gray-100"
+        class="tw-flex tw-flex-col tw-gap-8 tw-p-4 tw-rounded-lg tw-bg-gray-100 tw-justify-between"
       >
-        <!-- Select number of players -->
-        <div class="tw-flex tw-flex-col tw-gap-2">
-          <span class="tw-text-gray-500 tw-font-semibold tw-uppercase">
-            Players
-          </span>
-          <p-selectButton
-            [options]="numPlayersOptions"
-            [(ngModel)]="numPlayers"
-          ></p-selectButton>
+        <div>
+          <!-- Select number of players -->
+          <div class="tw-flex tw-flex-col tw-gap-2">
+            <span class="tw-text-gray-500 tw-font-semibold tw-uppercase">
+              Players
+            </span>
+            <p-selectButton
+              [options]="numPlayersOptions"
+              [(ngModel)]="numPlayers"
+            ></p-selectButton>
+          </div>
+          <!-- Add and remove game areas -->
+          <mc-add-remove-game-areas></mc-add-remove-game-areas>
         </div>
-        <!-- Add and remove game areas -->
-        <mc-add-remove-game-areas></mc-add-remove-game-areas>
+        <!-- Start game -->
+        <div class="tw-flex tw-justify-center tw-px-4 tw-pt-4 tw-border-t tw-border-gray-500">
+          <button
+            pButton
+            class="p-button-rounded p-button-primary"
+            label="START GAME"
+            (click)="onClickStartGame()"
+          ></button>
+        </div>
       </div>
 
       <!-- Right content -->
@@ -32,12 +43,10 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
 export class GameConfiguratorComponent {
   private _presenter = inject(EncounterSetupPresenter);
 
-  public readonly cardsInGame$ = this._presenter.cardsInGame$;
-
   public readonly numPlayersOptions = [1, 2, 3, 4];
   public numPlayers: number = 1;
 
   onClickStartGame() {
-    this._presenter.startGame();
+    this._presenter.startGame(this.numPlayers);
   }
 }

@@ -1,6 +1,11 @@
 import { Injectable, WritableSignal } from '@angular/core';
 import { v4 as uuid } from 'uuid';
-import { EGameAreaType, ICard, IGameArea } from '../interfaces';
+import {
+  EGameAreaType,
+  ICard,
+  IGameArea,
+  IGameConfigurationViewModel,
+} from '../interfaces';
 import { DataStore } from '../stores';
 
 @Injectable({
@@ -66,5 +71,12 @@ export class GameSetupService {
     this.gameState$.mutate((g) => {
       g.gameAreas.get(id).label = label;
     });
+  }
+
+  startGame(
+    numPlayers: number,
+    gameConfig: IGameConfigurationViewModel
+  ) {
+    // TODO this
   }
 }
