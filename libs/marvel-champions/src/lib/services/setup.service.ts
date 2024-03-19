@@ -4,7 +4,8 @@ import {
   EGameAreaType,
   ICard,
   IGameArea,
-  IGameConfigurationViewModel,
+  IGameCardConfiguration,
+  getDefaultGameState,
 } from '../interfaces';
 import { DataStore } from '../stores';
 
@@ -73,10 +74,34 @@ export class GameSetupService {
     });
   }
 
-  startGame(
-    numPlayers: number,
-    gameConfig: IGameConfigurationViewModel
-  ) {
-    // TODO this
+  setupGame(numPlayers: number, cardConfig: IGameCardConfiguration[]) {
+    this.gameState$.mutate((g) => {
+      // Create player area objects
+      g.playerAreas = [...Array(numPlayers).keys()].map((i) => ({
+        id: uuid(),
+        label: `Player ${i + 1}`,
+        health: 0,
+        cardsInPlay: [],
+        encounters: [],
+      }));
+      const cardsInGame = this.cardsInGame$();
+
+      // Sort cards into decks
+      cardConfig.forEach((c) => {
+        const card = cardsInGame.get(c.id);
+        const gameArea = g.gameAreas.get(c.gameAreaId);
+        for (let i = 0; i < card.quantity; i++) {
+          gameArea.deck.push({
+            id: c.id,
+            card,
+            fromAreaId: gameArea.id,
+          });
+        }
+      });
+    });
+  }
+
+  resetGame() {
+    this.dataStore.gameState$.set(getDefaultGameState());
   }
 }

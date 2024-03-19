@@ -12,6 +12,7 @@ import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presenter';
 import { CardsDatabaseHttpService, GameSetupService } from '../../services';
+import { GameplayService } from '../../services/gameplay.service';
 import { CardComponentModule } from '../cards';
 import { CardSelectorAddRemoveButtonsComponent } from './add-remove-cards-button.component';
 import { AddRemoveGameAreasComponent } from './add-remove-game-areas.component';
@@ -24,6 +25,7 @@ import { SelectableCardComponent } from './selectable-card.component';
   providers: [
     EncounterSetupPresenter,
     GameSetupService,
+    GameplayService,
     CardsDatabaseHttpService,
   ],
   imports: [

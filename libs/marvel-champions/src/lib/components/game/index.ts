@@ -1,3 +1,4 @@
+import { CdkDrag, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
@@ -13,6 +14,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presenter';
 import { CardsDatabaseHttpService, GameSetupService } from '../../services';
 import { CardComponentModule } from '../cards';
+import { MarvelChampionsGameAreaComponent } from './game-area.component';
 import { MarvelChampionsGameComponent } from './game.component';
 
 @NgModule({
@@ -34,8 +36,14 @@ import { MarvelChampionsGameComponent } from './game.component';
     TooltipModule,
     InputTextModule,
     CardComponentModule,
+    CdkDropListGroup,
+    CdkDropList,
+    CdkDrag,
   ],
-  declarations: [MarvelChampionsGameComponent],
-  exports: [MarvelChampionsGameComponent],
+  declarations: [
+    MarvelChampionsGameComponent,
+    MarvelChampionsGameAreaComponent,
+  ],
+  exports: [MarvelChampionsGameComponent, MarvelChampionsGameAreaComponent],
 })
 export class MarvelChampionsGameComponentModule {}

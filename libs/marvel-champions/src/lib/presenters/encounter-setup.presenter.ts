@@ -5,6 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { CARDS_BY_SET } from '../data/cards-by-set';
 import {
   ECardType,
@@ -44,6 +45,7 @@ const countCardsInMap = (cardMap: Map<string, ICard>, cards: ICard[]) => {
 
 @Injectable({ providedIn: 'root' })
 export class EncounterSetupPresenter {
+  private router = inject(Router);
   private setupService = inject(GameSetupService);
 
   private readonly selectedSetCode$: WritableSignal<string> = signal(null);
@@ -200,6 +202,11 @@ export class EncounterSetupPresenter {
   // Start game -----------------------------------------------------------------------
 
   startGame(numPlayers: number) {
-    // TODO this
+    this.setupService.setupGame(
+      numPlayers,
+      this.cardConfiguratorViewModel$().cardsInGame
+    );
+    this.router.navigate(['play'])
+    console.log(this.gameState$());
   }
 }

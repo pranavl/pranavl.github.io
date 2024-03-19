@@ -1,16 +1,21 @@
 import { ICard } from './cards';
 
-export interface IGameCard {
-  card: ICard;
-  fromAreaId: string;
-  isFaceUp: boolean;
-  isExhausted: boolean;
+export interface IPlayState {
+  isFaceUp?: boolean;
+  isExhausted?: boolean;
   usesHealth?: boolean;
   health?: number;
   usesThreat?: boolean;
   threat?: number;
   usesCounters?: boolean;
   counters?: number;
+}
+
+export interface IGameCard {
+  id: string;
+  card: ICard;
+  fromAreaId: string;
+  inPlayState?: IPlayState;
 }
 
 export enum EGameAreaType {
@@ -42,10 +47,10 @@ export interface IPlayerArea {
 
 export interface IGameState {
   gameAreas: Map<string, IGameArea>;
-  playerAreas: Map<string, IPlayerArea>;
+  playerAreas: IPlayerArea[];
   modifiers: {
-    amplify: number;
     accelerate: number;
+    amplify: number;
     hazard: number;
   };
 }

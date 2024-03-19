@@ -40,10 +40,10 @@ export function getDefaultGameState(): IGameState {
 
   return {
     gameAreas: new Map(gameAreas.map((a) => [a.id, a])),
-    playerAreas: new Map(),
+    playerAreas: [],
     modifiers: {
-      amplify: 0,
       accelerate: 0,
+      amplify: 0,
       hazard: 0,
     },
   };
