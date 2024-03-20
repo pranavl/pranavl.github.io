@@ -1,15 +1,15 @@
 import { Component, Input, ViewEncapsulation, inject } from '@angular/core';
-import { IGameArea } from '../../interfaces';
+import { IGameArea, IGameCard } from '../../interfaces';
 import { GamePresenter } from '../../presenters/game.presenter';
 
 @Component({
   selector: 'mc-game-area',
   template: `
     <div
-      class="tw-flex tw-flex-col tw-gap-4tw-p-4 tw-border tw-border-gray-500"
+      class="tw-flex tw-flex-col tw-min-w-[400px] tw-border tw-border-gray-500"
     >
       <!-- Game area header -->
-      <div class="tw-flex tw-flex-row tw-justify-between">
+      <div class="tw-flex tw-flex-row tw-justify-between tw-p-4">
         <div class="tw-capitalize tw-text-gray-600">
           {{ gameArea.label }}
         </div>
@@ -29,13 +29,20 @@ import { GamePresenter } from '../../presenters/game.presenter';
         ></button>
       </div>
       <!-- List of cards -->
-      <div cdkDropList [id]="gameArea.id" (cdkDropListDropped)="drop($event)">
-        <div *ngFor="let card of gameArea.cardsInPlay">
-          <!-- Cards -->
-          <div class="tw-p-4 tw-border tw-border-orange-400" cdkDrag>
-            {{ card.card.name }}
-          </div>
-        </div>
+      <div
+        class="draggable-card-list tw-flex tw-min-h-[10rem] tw-max-w-[600px] tw-overflow-x-auto tw-bg-gray-200"
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+        [id]="gameArea.id"
+        (cdkDropListDropped)="dropCard($event)"
+      >
+        <!-- Cards -->
+        <mc-card
+          *ngFor="let card of gameArea.cardsInPlay; trackBy: _trackById"
+          class="draggable-card"
+          cdkDrag
+          [card]="card.card"
+        ></mc-card>
       </div>
     </div>
   `,
@@ -46,8 +53,12 @@ export class MarvelChampionsGameAreaComponent {
 
   @Input({ required: true }) gameArea: IGameArea;
 
-  drop($event) {
-    this._presenter.drop(this.gameArea, $event);
+  _trackById(_: number, card: IGameCard) {
+    return card.id;
+  }
+
+  dropCard($event) {
+    this._presenter.cdkDropCard($event);
   }
 
   dealFromDeck() {

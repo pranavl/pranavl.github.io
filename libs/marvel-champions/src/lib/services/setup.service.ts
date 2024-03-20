@@ -92,7 +92,7 @@ export class GameSetupService {
         const gameArea = g.gameAreas.get(c.gameAreaId);
         for (let i = 0; i < card.quantity; i++) {
           gameArea.deck.push({
-            id: c.id,
+            id: `${c.id}_${i}`,
             card,
             fromAreaId: gameArea.id,
           });

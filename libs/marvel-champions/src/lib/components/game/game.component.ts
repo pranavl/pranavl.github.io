@@ -1,11 +1,14 @@
-import { Component, ViewEncapsulation, computed, inject } from '@angular/core';
+import { Component, ViewEncapsulation, inject } from '@angular/core';
 import { GamePresenter } from '../../presenters/game.presenter';
 
 @Component({
   selector: 'mc-game',
   template: `
-    <div cdkDropListGroup>
-      <!-- Game areas -->
+    <div
+      class="tw-flex tw-justify-between tw-m-4 tw-rounded-lg tw-border tw-border-black"
+      cdkDropListGroup
+    >
+      <!-- Top row game areas -->
       <mc-game-area *ngFor="let area of gameAreas$()" [gameArea]="area">
       </mc-game-area>
     </div>
@@ -16,7 +19,5 @@ export class MarvelChampionsGameComponent {
   private _presenter = inject(GamePresenter);
 
   public gameState$ = this._presenter.gameState$;
-  public gameAreas$ = computed(() => {
-    return [...this._presenter.gameAreas$().values()];
-  });
+  public gameAreas$ = this._presenter.encounterGameAreas$;
 }

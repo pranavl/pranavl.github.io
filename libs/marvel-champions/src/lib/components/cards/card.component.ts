@@ -21,7 +21,7 @@ import { ICard } from '../../interfaces';
         {{ card.type_name }}
       </div>
       <!-- Contents -->
-      <div class="tw-p-2 tw-flex tw-flex-row tw-justify-center tw-items-center">
+      <div class="tw-p-2 tw-flex tw-flex-row tw-justify-center tw-items-center tw-bg-white">
         <div *ngIf="showImage && !showText; else cardTextTemplate">
           <img
             [alt]="card.text"
