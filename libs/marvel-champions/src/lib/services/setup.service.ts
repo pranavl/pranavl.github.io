@@ -99,6 +99,9 @@ export class GameSetupService {
         }
       });
     });
+
+    // Cache the game state at the start of the game
+    this.dataStore.saveGameStateToLocalStorage();
   }
 
   resetGame() {

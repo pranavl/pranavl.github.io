@@ -174,7 +174,6 @@ export class CardsSelectorComponent {
   }
 
   onClickStartGame() {
-    console.log(this._presenter.cardsInGame$());
     this.gameConfiguratorDialogVisible = true;
   }
 }

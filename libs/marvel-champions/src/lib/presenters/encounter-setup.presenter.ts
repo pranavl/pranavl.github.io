@@ -207,6 +207,5 @@ export class EncounterSetupPresenter {
       this.cardConfiguratorViewModel$().cardsInGame
     );
     this.router.navigate(['play'])
-    console.log(this.gameState$());
   }
 }

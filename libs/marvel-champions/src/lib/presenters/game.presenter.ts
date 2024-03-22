@@ -96,4 +96,14 @@ export class GamePresenter {
   resetDeck(areaId: string) {
     this.gameplayService.resetDeck(areaId);
   }
+
+  // Save and load game -------------------------------------------------------
+
+  saveGame() {
+    this.gameplayService.saveGame();
+  }
+
+  loadGame() {
+    this.gameplayService.loadGame();
+  }
 }

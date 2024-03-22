@@ -1,4 +1,10 @@
-import { Component, Input, ViewEncapsulation, computed, inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  ViewEncapsulation,
+  computed,
+  inject,
+} from '@angular/core';
 import { ICard } from '../../interfaces';
 import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presenter';
 
@@ -17,6 +23,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
         [cardState]="viewModel"
         (addToGame)="addCardToGame()"
         (removeFromGame)="removeCardFromGame()"
+        [showLabel]="false"
       ></mc-add-remove-cards-button>
     </div>
   `,

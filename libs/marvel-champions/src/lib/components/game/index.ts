@@ -14,6 +14,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presenter';
 import { CardsDatabaseHttpService, GameSetupService } from '../../services';
 import { CardComponentModule } from '../cards';
+import { EncounterDeckAreaComponent } from './encounter-deck-area.component';
 import { MarvelChampionsGameAreaComponent } from './game-area.component';
 import { MarvelChampionsGameComponent } from './game.component';
 
@@ -43,7 +44,12 @@ import { MarvelChampionsGameComponent } from './game.component';
   declarations: [
     MarvelChampionsGameComponent,
     MarvelChampionsGameAreaComponent,
+    EncounterDeckAreaComponent,
   ],
-  exports: [MarvelChampionsGameComponent, MarvelChampionsGameAreaComponent],
+  exports: [
+    MarvelChampionsGameComponent,
+    MarvelChampionsGameAreaComponent,
+    EncounterDeckAreaComponent,
+  ],
 })
 export class MarvelChampionsGameComponentModule {}

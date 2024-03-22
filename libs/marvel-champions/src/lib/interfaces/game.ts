@@ -54,3 +54,16 @@ export interface IGameState {
     hazard: number;
   };
 }
+
+export interface ICachedGameState {
+  data: {
+    gameAreas: [string, IGameArea][];
+    playerAreas: IPlayerArea[];
+    modifiers: {
+      accelerate: number;
+      amplify: number;
+      hazard: number;
+    };
+  };
+  timestamp?: number;
+}

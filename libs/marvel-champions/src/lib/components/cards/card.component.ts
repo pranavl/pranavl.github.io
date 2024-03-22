@@ -21,13 +21,13 @@ import { ICard } from '../../interfaces';
         {{ card.type_name }}
       </div>
       <!-- Contents -->
-      <div class="tw-p-2 tw-flex tw-flex-row tw-justify-center tw-items-center tw-bg-white">
+      <div class="tw-p-2 tw-flex tw-flex-row tw-justify-center tw-items-center tw-bg-white tw-rounded-b-lg">
         <div *ngIf="showImage && !showText; else cardTextTemplate">
           <img
             [alt]="card.text"
             [src]="'https://marvelcdb.com' + card.imagesrc"
             (error)="handleError()"
-            class="tw-object-scale-down tw-max-h-[20rem]"
+            class="tw-object-scale-down tw-max-h-[10rem]"
           />
         </div>
 

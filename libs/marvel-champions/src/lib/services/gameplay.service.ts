@@ -45,7 +45,7 @@ export class GameplayService {
    * - update modifiers
    * @param card
    */
-  private onPutCardInPlay(card: IGameCard) {}
+  // private onPutCardInPlay(card: IGameCard) {}
 
   // Manipulate decks ---------------------------------------------------------
 
@@ -252,5 +252,15 @@ export class GameplayService {
 
   removeHazard() {
     this.gameState$.mutate((g) => (g.modifiers.hazard -= 1));
+  }
+
+  // Save and load game -------------------------------------------------------
+
+  saveGame() {
+    this.dataStore.saveGameStateToLocalStorage();
+  }
+
+  loadGame() {
+    this.dataStore.loadGameStateFromLocalStorage();
   }
 }

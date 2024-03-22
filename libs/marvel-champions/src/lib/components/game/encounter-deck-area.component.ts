@@ -3,7 +3,7 @@ import { IGameArea, IGameCard } from '../../interfaces';
 import { GamePresenter } from '../../presenters/game.presenter';
 
 @Component({
-  selector: 'mc-game-area',
+  selector: 'mc-encounter-deck-area',
   template: `
     <div
       class="tw-flex tw-flex-col tw-border tw-border-gray-500 tw-rounded-lg"
@@ -48,7 +48,7 @@ import { GamePresenter } from '../../presenters/game.presenter';
   `,
   encapsulation: ViewEncapsulation.None,
 })
-export class MarvelChampionsGameAreaComponent {
+export class EncounterDeckAreaComponent {
   private _presenter = inject(GamePresenter);
 
   @Input({ required: true }) gameArea: IGameArea;
