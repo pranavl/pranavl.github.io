@@ -44,7 +44,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
         <button
           pButton
           class="p-button-rounded p-button-outlined"
-          icon="fa-solid fa-plus"
+          icon="fas fa-plus"
           label="Add game area"
           (click)="addGameArea()"
         >

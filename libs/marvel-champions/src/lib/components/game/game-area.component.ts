@@ -5,11 +5,11 @@ import { GamePresenter } from '../../presenters/game.presenter';
 @Component({
   selector: 'mc-game-area',
   template: `
-    <div
-      class="tw-flex tw-flex-col tw-border tw-border-gray-500 tw-rounded-lg"
-    >
+    <div class="tw-flex tw-flex-col tw-border tw-border-gray-500 tw-rounded-lg">
       <!-- Game area header -->
-      <div class="tw-flex tw-flex-row tw-justify-between tw-p-2 tw-bg-white tw-rounded-t-lg">
+      <div
+        class="tw-flex tw-flex-row tw-justify-between tw-p-2 tw-bg-white tw-rounded-t-lg"
+      >
         <div class="tw-capitalize tw-text-gray-600">
           {{ gameArea.label }}
         </div>
@@ -20,29 +20,33 @@ import { GamePresenter } from '../../presenters/game.presenter';
           [disabled]="gameArea.deck.length === 0"
           (click)="dealFromDeck()"
         ></button>
+        <span>
+          {{ gameArea.discard.length }}
+        </span>
         <button
           pButton
           class="p-button-rounded p-button-danger"
-          icon="fa-solid fa-arrow-rotate-left"
+          icon="fas fa-arrow-rotate-left"
           label="Reset"
           (click)="resetDeck()"
         ></button>
       </div>
       <!-- Cards in the game area -->
       <div
-        class="draggable-card-list tw-flex tw-min-h-[230px] tw-gap-2 tw-overflow-x-auto tw-bg-gray-200 tw-rounded-b-lg tw-justify-center tw-py-2"
+        class="draggable-card-list tw-flex tw-min-h-[240px] tw-gap-2 tw-overflow-x-auto tw-bg-gray-200 tw-rounded-b-lg tw-justify-center tw-items-center tw-py-2"
         cdkDropList
         cdkDropListOrientation="horizontal"
         [id]="gameArea.id"
         (cdkDropListDropped)="dropCard($event)"
       >
         <!-- Cards -->
-        <mc-card
+        <mc-game-card
           *ngFor="let card of gameArea.cardsInPlay; trackBy: _trackById"
           class="draggable-card"
           cdkDrag
-          [card]="card.card"
-        ></mc-card>
+          [card]="card"
+          [areaId]="gameArea.id"
+        ></mc-game-card>
       </div>
     </div>
   `,

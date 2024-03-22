@@ -17,7 +17,7 @@ import {
         *ngIf="!cardState.isInGame; else removeButton"
         pButton
         class="p-button-rounded p-button-primary"
-        icon="fa-solid fa-plus"
+        icon="fas fa-plus"
         [label]="showLabel ? 'Add' : ''"
         (click)="onClickAddToGame()"
       ></button>
@@ -27,7 +27,7 @@ import {
         <button
           pButton
           class="p-button-rounded p-button-danger"
-          icon="fa-solid fa-minus"
+          icon="fas fa-minus"
           [label]="showLabel ? 'Remove' : ''"
           (click)="onClickRemove()"
         ></button>

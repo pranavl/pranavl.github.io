@@ -32,7 +32,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
 export class SelectableCardComponent {
   private _presenter = inject(EncounterSetupPresenter);
 
-  @Input() card: ICard;
+  @Input({ required: true }) card: ICard;
   @Input() showImage: boolean = true;
 
   public viewModel$ = computed(() => ({

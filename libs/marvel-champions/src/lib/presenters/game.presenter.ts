@@ -2,7 +2,6 @@ import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Injectable, computed, inject } from '@angular/core';
 import { EGameAreaType, IGameArea, IGameCard } from '../interfaces';
 import { GameplayService } from '../services/gameplay.service';
-import { MainEncounterAreaDefinitions } from './config';
 
 @Injectable({ providedIn: 'root' })
 export class GamePresenter {
@@ -20,16 +19,24 @@ export class GamePresenter {
   ]);
 
   /**
-   * Main encounter game areas
+   * Main scheme game area
    */
-  public encounterGameAreas$ = computed(() =>
-    this.gameAreasList$()
-      .filter((a) => MainEncounterAreaDefinitions.has(a.type))
-      .sort(
-        (a, b) =>
-          MainEncounterAreaDefinitions.get(a.type).sortOrder -
-          MainEncounterAreaDefinitions.get(b.type).sortOrder
-      )
+  public mainSchemeGameArea$ = computed(() =>
+    this.gameAreasList$().find((g) => g.type === EGameAreaType.MAIN_SCHEME)
+  );
+
+  /**
+   * Villain game area
+   */
+  public villainGameArea$ = computed(() =>
+    this.gameAreasList$().find((g) => g.type === EGameAreaType.VILLAIN)
+  );
+
+  /**
+   * Encounter deck game area
+   */
+  public encounterDeckGameArea$ = computed(() =>
+    this.gameAreasList$().find((g) => g.type === EGameAreaType.ENCOUNTER)
   );
 
   /**
@@ -95,6 +102,10 @@ export class GamePresenter {
    */
   resetDeck(areaId: string) {
     this.gameplayService.resetDeck(areaId);
+  }
+
+  discard(card: IGameCard, fromAreaId: string) {
+    this.gameplayService.discardCard(card, fromAreaId);
   }
 
   // Save and load game -------------------------------------------------------

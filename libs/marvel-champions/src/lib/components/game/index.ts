@@ -16,6 +16,7 @@ import { CardsDatabaseHttpService, GameSetupService } from '../../services';
 import { CardComponentModule } from '../cards';
 import { EncounterDeckAreaComponent } from './encounter-deck-area.component';
 import { MarvelChampionsGameAreaComponent } from './game-area.component';
+import { GameCardComponent } from './game-card.component';
 import { MarvelChampionsGameComponent } from './game.component';
 
 @NgModule({
@@ -45,11 +46,13 @@ import { MarvelChampionsGameComponent } from './game.component';
     MarvelChampionsGameComponent,
     MarvelChampionsGameAreaComponent,
     EncounterDeckAreaComponent,
+    GameCardComponent,
   ],
   exports: [
     MarvelChampionsGameComponent,
     MarvelChampionsGameAreaComponent,
     EncounterDeckAreaComponent,
+    GameCardComponent,
   ],
 })
 export class MarvelChampionsGameComponentModule {}

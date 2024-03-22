@@ -28,20 +28,16 @@ import { GamePresenter } from '../../presenters/game.presenter';
           class="tw-flex tw-justify-between tw-p-4 tw-gap-4 tw-rounded-lg tw-bg-orange-100"
           cdkDropListGroup
         >
-          <!-- Top row game areas: villain, main scheme, encounter -->
-          <ng-container *ngFor="let area of gameAreas$()">
-            <!-- Encounter deck -->
-            <mc-encounter-deck-area
-              *ngIf="area.type === GameAreaType.ENCOUNTER; else generalGameArea"
-              class="tw-w-1/3"
-              [gameArea]="area"
-            >
-            </mc-encounter-deck-area>
-            <!-- General game area -->
-            <ng-template #generalGameArea>
-              <mc-game-area class="tw-w-1/3" [gameArea]="area"> </mc-game-area>
-            </ng-template>
-          </ng-container>
+          <!-- Top row game areas: main scheme, villain, encounter -->
+          <mc-game-area class="tw-w-1/3" [gameArea]="mainSchemeArea$()">
+          </mc-game-area>
+          <mc-game-area class="tw-w-1/3" [gameArea]="villainArea$()">
+          </mc-game-area>
+          <mc-encounter-deck-area
+            class="tw-w-1/4"
+            [gameArea]="encounterArea$()"
+          >
+          </mc-encounter-deck-area>
         </div>
       </div>
     </div>
@@ -52,7 +48,10 @@ export class MarvelChampionsGameComponent {
   private _presenter = inject(GamePresenter);
 
   public gameState$ = this._presenter.gameState$;
-  public gameAreas$ = this._presenter.encounterGameAreas$;
+
+  public villainArea$ = this._presenter.villainGameArea$;
+  public mainSchemeArea$ = this._presenter.mainSchemeGameArea$;
+  public encounterArea$ = this._presenter.encounterDeckGameArea$;
 
   public GameAreaType = EGameAreaType;
 
