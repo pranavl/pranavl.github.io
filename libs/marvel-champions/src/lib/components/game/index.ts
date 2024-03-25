@@ -18,6 +18,7 @@ import { EncounterDeckAreaComponent } from './encounter-deck-area.component';
 import { MarvelChampionsGameAreaComponent } from './game-area.component';
 import { GameCardComponent } from './game-card.component';
 import { MarvelChampionsGameComponent } from './game.component';
+import { GameAreaToolbarComponent } from './game-area-toolbar.component';
 
 @NgModule({
   providers: [
@@ -47,12 +48,14 @@ import { MarvelChampionsGameComponent } from './game.component';
     MarvelChampionsGameAreaComponent,
     EncounterDeckAreaComponent,
     GameCardComponent,
+    GameAreaToolbarComponent
   ],
   exports: [
     MarvelChampionsGameComponent,
     MarvelChampionsGameAreaComponent,
     EncounterDeckAreaComponent,
     GameCardComponent,
+    GameAreaToolbarComponent
   ],
 })
 export class MarvelChampionsGameComponentModule {}

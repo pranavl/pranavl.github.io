@@ -23,21 +23,22 @@ import { GamePresenter } from '../../presenters/game.presenter';
       </div>
 
       <!-- Board -->
-      <div class="tw-p-2">
+      <div class="tw-flex tw-flex-col tw-gap-2 tw-p-2" cdkDropListGroup>
+        <!-- Top row game areas: main scheme, villain -->
         <div
           class="tw-flex tw-justify-between tw-p-4 tw-gap-4 tw-rounded-lg tw-bg-orange-100"
-          cdkDropListGroup
         >
-          <!-- Top row game areas: main scheme, villain, encounter -->
-          <mc-game-area class="tw-w-1/3" [gameArea]="mainSchemeArea$()">
+          <mc-game-area class="tw-flex-1" [gameArea]="mainSchemeArea$()">
           </mc-game-area>
-          <mc-game-area class="tw-w-1/3" [gameArea]="villainArea$()">
+          <mc-game-area class="tw-flex-1" [gameArea]="villainArea$()">
           </mc-game-area>
-          <mc-encounter-deck-area
-            class="tw-w-1/4"
-            [gameArea]="encounterArea$()"
-          >
-          </mc-encounter-deck-area>
+        </div>
+        <!-- Second row: Encounter -->
+        <div
+          class="tw-flex tw-justify-between tw-p-4 tw-gap-4 tw-rounded-lg tw-bg-orange-100"
+        >
+          <mc-game-area class="tw-flex-1" [gameArea]="encounterArea$()">
+          </mc-game-area>
         </div>
       </div>
     </div>

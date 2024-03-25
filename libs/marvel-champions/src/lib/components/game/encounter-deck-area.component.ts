@@ -16,7 +16,7 @@ import { GamePresenter } from '../../presenters/game.presenter';
       </div>
       <!-- Body -->
       <div
-        class="tw-flex tw-flex-row tw-gap-2 tw-p-2 tw-min-h-[240px] tw-justify-center"
+        class="tw-flex tw-flex-row tw-gap-2 tw-p-2 tw-justify-center"
       >
         <!-- Deck -->
         <div class="tw-flex tw-flex-col tw-flex-grow tw-gap-4 tw-max-w-1/2">

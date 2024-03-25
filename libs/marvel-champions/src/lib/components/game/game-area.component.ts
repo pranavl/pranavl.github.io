@@ -13,23 +13,7 @@ import { GamePresenter } from '../../presenters/game.presenter';
         <div class="tw-capitalize tw-text-gray-600">
           {{ gameArea.label }}
         </div>
-        <button
-          pButton
-          class="p-button-rounded p-button-danger"
-          [label]="'Deck: ' + gameArea.deck.length.toString()"
-          [disabled]="gameArea.deck.length === 0"
-          (click)="dealFromDeck()"
-        ></button>
-        <span>
-          {{ gameArea.discard.length }}
-        </span>
-        <button
-          pButton
-          class="p-button-rounded p-button-danger"
-          icon="fas fa-arrow-rotate-left"
-          label="Reset"
-          (click)="resetDeck()"
-        ></button>
+        <mc-game-area-toolbar [gameArea]="gameArea"></mc-game-area-toolbar>
       </div>
       <!-- Cards in the game area -->
       <div
