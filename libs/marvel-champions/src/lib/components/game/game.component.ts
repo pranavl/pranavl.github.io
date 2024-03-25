@@ -5,7 +5,7 @@ import { GamePresenter } from '../../presenters/game.presenter';
 @Component({
   selector: 'mc-game',
   template: `
-    <div class="tw-flex tw-flex-col tw-gap-2">
+    <div class="tw-h-screen tw-flex tw-flex-col tw-gap-2">
       <!-- Header -->
       <div class="tw-flex tw-gap-2 tw-bg-gray-100 tw-p-2 tw-justify-end">
         <button
@@ -22,23 +22,33 @@ import { GamePresenter } from '../../presenters/game.presenter';
         ></button>
       </div>
 
-      <!-- Board -->
-      <div class="tw-flex tw-flex-col tw-gap-2 tw-p-2" cdkDropListGroup>
-        <!-- Top row game areas: main scheme, villain -->
+      <div class="tw-flex tw-flex-grow tw-flex-row tw-gap-4 tw-overflow-hidden">
+        <!-- Board -->
         <div
-          class="tw-flex tw-justify-between tw-p-4 tw-gap-4 tw-rounded-lg tw-bg-orange-100"
+          class="tw-flex-1 tw-h-full tw-overflow-y-auto tw-flex tw-flex-col tw-gap-2 tw-p-2"
+          cdkDropListGroup
         >
-          <mc-game-area class="tw-flex-1" [gameArea]="mainSchemeArea$()">
-          </mc-game-area>
-          <mc-game-area class="tw-flex-1" [gameArea]="villainArea$()">
-          </mc-game-area>
+          <!-- Top row game areas: main scheme, villain -->
+          <div
+            class="tw-flex tw-justify-between tw-p-2 tw-gap-4 tw-rounded-lg tw-bg-orange-100"
+          >
+            <mc-game-area class="tw-w-full" [gameArea]="mainSchemeArea$()">
+            </mc-game-area>
+            <mc-game-area class="tw-w-full" [gameArea]="villainArea$()">
+            </mc-game-area>
+          </div>
+          <!-- Second row: Encounter -->
+          <div
+            class="tw-flex tw-justify-between tw-p-2 tw-gap-4 tw-rounded-lg tw-bg-orange-100"
+          >
+            <mc-game-area class="tw-w-full" [gameArea]="encounterArea$()">
+            </mc-game-area>
+          </div>
         </div>
-        <!-- Second row: Encounter -->
-        <div
-          class="tw-flex tw-justify-between tw-p-4 tw-gap-4 tw-rounded-lg tw-bg-orange-100"
-        >
-          <mc-game-area class="tw-flex-1" [gameArea]="encounterArea$()">
-          </mc-game-area>
+
+        <!-- Action panel -->
+        <div class="tw-w-[300px] tw-overflow-y-auto">
+          <mc-action-panel></mc-action-panel>
         </div>
       </div>
     </div>

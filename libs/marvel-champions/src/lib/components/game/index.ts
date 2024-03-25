@@ -14,11 +14,11 @@ import { TooltipModule } from 'primeng/tooltip';
 import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presenter';
 import { CardsDatabaseHttpService, GameSetupService } from '../../services';
 import { CardComponentModule } from '../cards';
-import { EncounterDeckAreaComponent } from './encounter-deck-area.component';
+import { ActionPanelComponent } from './action-panel.component';
+import { GameAreaToolbarComponent } from './game-area-toolbar.component';
 import { MarvelChampionsGameAreaComponent } from './game-area.component';
 import { GameCardComponent } from './game-card.component';
 import { MarvelChampionsGameComponent } from './game.component';
-import { GameAreaToolbarComponent } from './game-area-toolbar.component';
 
 @NgModule({
   providers: [
@@ -46,16 +46,16 @@ import { GameAreaToolbarComponent } from './game-area-toolbar.component';
   declarations: [
     MarvelChampionsGameComponent,
     MarvelChampionsGameAreaComponent,
-    EncounterDeckAreaComponent,
     GameCardComponent,
-    GameAreaToolbarComponent
+    GameAreaToolbarComponent,
+    ActionPanelComponent,
   ],
   exports: [
     MarvelChampionsGameComponent,
     MarvelChampionsGameAreaComponent,
-    EncounterDeckAreaComponent,
     GameCardComponent,
-    GameAreaToolbarComponent
+    GameAreaToolbarComponent,
+    ActionPanelComponent,
   ],
 })
 export class MarvelChampionsGameComponentModule {}

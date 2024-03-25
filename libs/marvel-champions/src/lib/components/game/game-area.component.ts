@@ -8,9 +8,10 @@ import { GamePresenter } from '../../presenters/game.presenter';
     <div class="tw-flex tw-flex-col tw-border tw-border-gray-500 tw-rounded-lg">
       <!-- Game area header -->
       <div
-        class="tw-flex tw-flex-row tw-justify-between tw-p-2 tw-bg-white tw-rounded-t-lg"
+        class="tw-flex tw-flex-row tw-gap-2 tw-justify-between tw-items-center tw-p-2 tw-px-4 tw-bg-white tw-rounded-t-lg"
       >
-        <div class="tw-capitalize tw-text-gray-600">
+        <div class="tw-uppercase tw-font-semibold tw-text-gray-600">
+          <i [class]="gameArea.icon"></i>
           {{ gameArea.label }}
         </div>
         <mc-game-area-toolbar [gameArea]="gameArea"></mc-game-area-toolbar>
