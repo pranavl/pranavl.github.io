@@ -5,7 +5,7 @@ import { GamePresenter } from '../../presenters/game.presenter';
 @Component({
   selector: 'mc-game',
   template: `
-    <div class="tw-h-screen tw-flex tw-flex-col tw-gap-2">
+    <div class="tw-h-screen tw-flex tw-flex-col">
       <!-- Header -->
       <div class="tw-flex tw-gap-2 tw-bg-gray-100 tw-p-2 tw-justify-end">
         <button
@@ -20,12 +20,20 @@ import { GamePresenter } from '../../presenters/game.presenter';
           icon="fas fa-download"
           (click)="loadGame()"
         ></button>
+        <button
+          pButton
+          class="p-button-icon p-button-outlined p-button-danger"
+          icon="fas fa-trash"
+          (click)="resetGame()"
+        ></button>
       </div>
 
-      <div class="tw-flex tw-flex-grow tw-flex-row tw-gap-4 tw-overflow-hidden">
+      <div
+        class="tw-pt-4 tw-pb-4 tw-flex tw-flex-grow tw-flex-row tw-gap-4 tw-overflow-hidden"
+      >
         <!-- Board -->
         <div
-          class="tw-flex-1 tw-h-full tw-overflow-y-auto tw-flex tw-flex-col tw-gap-2 tw-p-2"
+          class="tw-flex-1 tw-h-full tw-overflow-y-auto tw-flex tw-flex-col tw-gap-2 tw-pl-4"
           cdkDropListGroup
         >
           <!-- Top row game areas: main scheme, villain -->
@@ -44,6 +52,13 @@ import { GamePresenter } from '../../presenters/game.presenter';
             <mc-game-area class="tw-w-full" [gameArea]="encounterArea$()">
             </mc-game-area>
           </div>
+          <!-- Player areas -->
+          <!-- <div
+            class="tw-flex tw-justify-between tw-p-2 tw-gap-4 tw-rounded-lg tw-bg-orange-100"
+          >
+            <mc-game-area class="tw-w-full" [gameArea]="encounterArea$()">
+            </mc-game-area>
+          </div> -->
         </div>
 
         <!-- Action panel -->
@@ -64,6 +79,8 @@ export class MarvelChampionsGameComponent {
   public mainSchemeArea$ = this._presenter.mainSchemeGameArea$;
   public encounterArea$ = this._presenter.encounterDeckGameArea$;
 
+  public playerAreas$ = this._presenter.playerAreas$;
+
   public GameAreaType = EGameAreaType;
 
   saveGame() {
@@ -72,5 +89,10 @@ export class MarvelChampionsGameComponent {
 
   loadGame() {
     this._presenter.loadGame();
+  }
+
+  resetGame() {
+    this._presenter.resetGame();
+    this._presenter.discardSavedGame();
   }
 }

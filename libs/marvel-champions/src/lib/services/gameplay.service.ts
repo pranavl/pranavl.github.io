@@ -1,6 +1,11 @@
 import { moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Injectable } from '@angular/core';
-import { IGameCard, IGameState, getDefaultGameState } from '../interfaces';
+import {
+  EGameAreaClass,
+  IGameCard,
+  IGameState,
+  getDefaultGameState,
+} from '../interfaces';
 import { DataStore } from '../stores';
 import { randomShuffle } from '../utils';
 
@@ -32,10 +37,31 @@ export class GameplayService {
   }
 
   private createCardInPlay(card: IGameCard, faceUp: boolean): IGameCard {
+    const perHeroMultiplier = this.gameState$()?.playerAreas?.length ?? 1;
+    const health = card.card.health
+      ? {
+          health:
+            card.card.health *
+            (card.card.health_per_hero ? perHeroMultiplier : 1),
+          usesHealth: !!card.card.health,
+        }
+      : {};
+    const threat = card.card.threat
+      ? {
+          threat:
+            card.card.base_threat *
+            (card.card.base_threat_fixed ? 1 : perHeroMultiplier),
+          maxThreat:
+            card.card.threat * (card.card.threat_fixed ? 1 : perHeroMultiplier),
+          usesThreat: !!card.card.threat,
+        }
+      : {};
     return {
       ...card,
       inPlayState: {
         isFaceUp: faceUp,
+        ...health,
+        ...threat,
       },
     };
   }
@@ -63,15 +89,19 @@ export class GameplayService {
     // Check game areas
     const gameArea = g.gameAreas.get(id);
     if (gameArea) {
-      return gameArea;
+      return { type: EGameAreaClass.SCENARIO, data: gameArea };
     }
     // Check player areas
     const playerArea = g.playerAreas.find((p) => p.id == id);
     if (playerArea) {
-      return playerArea;
+      return { type: EGameAreaClass.PLAYER, data: playerArea };
     }
     // Otherwise, raise an exception
     throw new Error(`Unable to find game area with id ${id}`);
+  }
+
+  public getArea(id: string) {
+    return this._getArea(this.gameState$(), id);
   }
 
   /**
@@ -83,7 +113,7 @@ export class GameplayService {
    */
   moveCardWithinPlayArea(areaId: string, fromIndex: number, toIndex: number) {
     this.gameState$.mutate((g) => {
-      const gameArea = this._getArea(g, areaId);
+      const { data: gameArea } = this._getArea(g, areaId);
       moveItemInArray(gameArea.cardsInPlay, fromIndex, toIndex);
     });
   }
@@ -102,8 +132,8 @@ export class GameplayService {
     toIndex: number
   ) {
     this.gameState$.mutate((g) => {
-      const fromArea = this._getArea(g, fromAreaId);
-      const toArea = this._getArea(g, toAreaId);
+      const { data: fromArea } = this._getArea(g, fromAreaId);
+      const { data: toArea } = this._getArea(g, toAreaId);
       transferArrayItem(
         fromArea.cardsInPlay,
         toArea.cardsInPlay,
@@ -189,6 +219,7 @@ export class GameplayService {
       );
       // Add it to the discard pile in where it came from
       const toArea = g.gameAreas.get(targetAreaId ?? card.fromAreaId);
+      card.inPlayState = null;
       toArea.discard.unshift(card);
     });
   }
@@ -213,6 +244,7 @@ export class GameplayService {
       );
       // Add it to the discard pile in where it came from
       const toArea = g.gameAreas.get(targetAreaId ?? card.fromAreaId);
+      card.inPlayState = null;
       toArea.discard.unshift(card);
     });
   }
@@ -262,5 +294,9 @@ export class GameplayService {
 
   loadGame() {
     this.dataStore.loadGameStateFromLocalStorage();
+  }
+
+  discardSavedGame() {
+    this.dataStore.discardSavedGame();
   }
 }

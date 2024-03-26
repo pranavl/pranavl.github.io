@@ -43,4 +43,8 @@ export class DataStore {
     };
     this.gameState$.set(loaded);
   }
+
+  public discardSavedGame() {
+    localStorage.removeItem('savedGameState')
+  }
 }

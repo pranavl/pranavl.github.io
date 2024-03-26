@@ -1,6 +1,13 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { Injectable, computed, inject } from '@angular/core';
-import { EGameAreaType, IGameArea, IGameCard } from '../interfaces';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import {
+  EFocusType,
+  EGameAreaClass,
+  EGameAreaType,
+  IFocusedElement,
+  IGameArea,
+  IGameCard,
+} from '../interfaces';
 import { GameplayService } from '../services/gameplay.service';
 
 @Injectable({ providedIn: 'root' })
@@ -55,6 +62,52 @@ export class GamePresenter {
    * Game modifier state
    */
   public gameModifiers$ = computed(() => this.gameState$()?.modifiers);
+
+  public focused$ = signal<IFocusedElement>(null);
+
+  focusOnDeck(areaId: string) {
+    const { type, data } = this.gameplayService.getArea(areaId);
+    if (type !== EGameAreaClass.SCENARIO) {
+      console.error(`Unsupported type for focusOnDeck function: ${type}`);
+    }
+
+    this.focused$.set({
+      type: EFocusType.DECK,
+      data,
+    });
+  }
+
+  focusOnDiscard(areaId: string) {
+    const { type, data } = this.gameplayService.getArea(areaId);
+    if (type !== EGameAreaClass.SCENARIO) {
+      console.error(`Unsupported type for focusOnDeck function: ${type}`);
+    }
+
+    this.focused$.set({
+      type: EFocusType.DISCARD,
+      data,
+    });
+  }
+
+  focusOnArea(areaId: string, card?: IGameCard) {
+    const { type, data } = this.gameplayService.getArea(areaId);
+    const focusType =
+      type === EGameAreaClass.SCENARIO
+        ? EFocusType.GAME_AREA
+        : type === EGameAreaClass.PLAYER
+        ? EFocusType.PLAYER_AREA
+        : null;
+
+    if (!focusType) {
+      console.error(`Unsupported type for focusOnArea function: ${type}`);
+    }
+
+    this.focused$.set({
+      type: focusType,
+      data,
+      card,
+    });
+  }
 
   /**
    * Function for handling drag/drop interactions between game areas
@@ -116,5 +169,13 @@ export class GamePresenter {
 
   loadGame() {
     this.gameplayService.loadGame();
+  }
+
+  resetGame() {
+    this.gameplayService.resetGame();
+  }
+
+  discardSavedGame() {
+    this.gameplayService.discardSavedGame();
   }
 }

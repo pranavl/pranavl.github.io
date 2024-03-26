@@ -9,7 +9,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
       <div class="tw-w-[25rem] tw-flex tw-flex-col">
         <!-- List of sets -->
         <p-listbox
-          class="tw-overflow-y-auto"
+          class="tw-overflow-y-auto tw-h-full"
           [options]="setListViewModel$()"
           [group]="true"
           (onChange)="onChangeSelectedSet($event)"

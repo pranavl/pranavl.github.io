@@ -9,7 +9,7 @@ import { GamePresenter } from '../../presenters/game.presenter';
       <div
         class="tw-flex tw-flex-row tw-gap-2 tw-justify-center tw-items-center tw-px-2 tw-py-1 tw-bg-gray-100 tw-rounded-lg"
       >
-        <span>
+        <span class="tw-min-w-[30px]">
           <i class="fas fa-box"></i>
           {{ gameArea.deck.length }}
         </span>
@@ -30,26 +30,26 @@ import { GamePresenter } from '../../presenters/game.presenter';
           icon="fas fa-magnifying-glass"
           pTooltip="Search deck"
           tooltipPosition="top"
-          (click)="search()"
-        ></button>
-        <!-- Peek at deck -->
-        <button
-          pButton
-          class="p-button-icon p-button-outlined"
-          icon="fas fa-eye"
-          pTooltip="Peek"
-          tooltipPosition="top"
-          (click)="peek()"
+          (click)="searchDeck()"
         ></button>
       </div>
       <div
         class="tw-flex tw-flex-row tw-gap-2 tw-justify-center tw-items-center tw-px-2 tw-py-1 tw-bg-red-100 tw-rounded-lg"
       >
         <!-- Discard -->
-        <span class="tw-text-red-500">
+        <span class="tw-text-red-500 tw-min-w-[30px]">
           <i class="fas fa-trash"></i>
           {{ gameArea.discard.length }}
         </span>
+        <!-- Search discard -->
+        <button
+          pButton
+          class="p-button-icon p-button-outlined p-button-danger"
+          icon="fas fa-magnifying-glass"
+          pTooltip="Search deck"
+          tooltipPosition="top"
+          (click)="searchDiscard()"
+        ></button>
         <!-- Reset deck -->
         <button
           pButton
@@ -74,9 +74,13 @@ export class GameAreaToolbarComponent {
     this._presenter.dealFromDeck(this.gameArea);
   }
 
-  search() {}
+  searchDeck() {
+    this._presenter.focusOnDeck(this.gameArea.id);
+  }
 
-  peek() {}
+  searchDiscard() {
+    this._presenter.focusOnDiscard(this.gameArea.id);
+  }
 
   resetDeck() {
     this._presenter.resetDeck(this.gameArea.id);

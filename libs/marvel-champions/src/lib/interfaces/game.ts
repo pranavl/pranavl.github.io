@@ -3,10 +3,14 @@ import { ICard } from './cards';
 export interface IPlayState {
   isFaceUp?: boolean;
   isExhausted?: boolean;
+  tough?: number;
+  stunned?: number;
+  confused?: number;
   usesHealth?: boolean;
   health?: number;
   usesThreat?: boolean;
   threat?: number;
+  maxThreat?: number;
   usesCounters?: boolean;
   counters?: number;
 }
@@ -16,6 +20,11 @@ export interface IGameCard {
   card: ICard;
   fromAreaId: string;
   inPlayState?: IPlayState;
+}
+
+export enum EGameAreaClass {
+  SCENARIO = 'SCENARIO',
+  PLAYER = 'PLAYER',
 }
 
 export enum EGameAreaType {
@@ -66,4 +75,17 @@ export interface ICachedGameState {
     };
   };
   timestamp?: number;
+}
+
+export enum EFocusType {
+  GAME_AREA = 'GAME_AREA',
+  PLAYER_AREA = 'PLAYER_AREA',
+  DECK = 'DECK',
+  DISCARD = 'DISCARD',
+}
+
+export interface IFocusedElement {
+  type: EFocusType;
+  data: IGameArea | IPlayerArea;
+  card?: IGameCard;
 }

@@ -56,7 +56,7 @@ import { EncounterSetupPresenter } from '../../presenters/encounter-setup.presen
         <tr>
           <td>{{ row.setName }}</td>
           <td>{{ row.name }}</td>
-          <td>{{ row.type }}</td>
+          <td><mc-card-type-tag [type]="row.type"></mc-card-type-tag></td>
           <td>
             <p-selectButton
               [options]="vm.gameAreaOptions"
@@ -87,7 +87,6 @@ export class EncounterCardOrganizerComponent {
   public readonly vm$ = this._presenter.cardConfiguratorViewModel$;
 
   onRowGameAreaChanged(cardId: string, gameAreaId: string) {
-    console.log(cardId, gameAreaId);
     this._presenter.addCardToGameArea(cardId, gameAreaId);
   }
 

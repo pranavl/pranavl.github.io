@@ -20,6 +20,7 @@ import { EncounterCardOrganizerComponent } from './card-organizer.component';
 import { CardsSelectorComponent } from './card-set-selector.component';
 import { GameConfiguratorComponent } from './game-configurator.component';
 import { SelectableCardComponent } from './selectable-card.component';
+import { CardTypeTagComponent } from '../cards/type-tag.component';
 
 @NgModule({
   providers: [
@@ -41,6 +42,7 @@ import { SelectableCardComponent } from './selectable-card.component';
     TooltipModule,
     InputTextModule,
     CardComponentModule,
+    CardTypeTagComponent
   ],
   declarations: [
     CardsSelectorComponent,
